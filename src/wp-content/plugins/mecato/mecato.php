@@ -17,9 +17,14 @@ define("MECATO_JS_BACKBONE", 'main');
 
 require_once('inc/Mecato.php');
 
+/**Models**/
+require_once('inc/models/Restaurant.php');
+
 /**Views**/
 
 require_once('inc/views/EditRestaurantView.php');
 
+/**Api**/
+require_once('inc/api/ApiRestaurant.php');
 
 $GLOBALS['mecato'] = new Mecato();

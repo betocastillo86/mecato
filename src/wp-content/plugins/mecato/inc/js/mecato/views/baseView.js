@@ -1,8 +1,8 @@
 /**
  * Created by Beto on 12/19/2015.
  */
-define(['underscore', 'backbone'],
-    function (_, Backbone) {
+define(['underscore', 'backbone', 'mecato/helpers', 'validations', 'stickit'],
+    function (_, Backbone, Helpers) {
 
         var BaseView = Backbone.View.extend({
 
@@ -55,7 +55,7 @@ define(['underscore', 'backbone'],
             basicValidations : function()
             {
                 //agrega las caracteristicas de tipos de datos a los combos
-                this.$("input[data-val='int']").on("keypress", TuilsUtil.onlyNumbers);
+                this.$("input[data-val='int']").on("keypress", Helpers.onlyNumbers);
                 this.$("input[data-val='none']").on("keypress", function () { return false; });
             },
             //Muestra el cargando en toda la pantalla
@@ -120,7 +120,7 @@ define(['underscore', 'backbone'],
 
                 if (errors && goToFocus !== false)
                 {
-                    this.scrollFocusObject('.input-validation-error:first', -50);
+                    this.scrollFocusObject('.has-error:first', -100);
                 }
 
                 return errors;
@@ -147,15 +147,21 @@ define(['underscore', 'backbone'],
                 var that = this;
                 _.each(errors, function (errorField, index) {
                     //recorre los errores y marca solo los que tienen objeto DOM
-                    var domObj = that.$(fieldsToMark[index]);
+                    /*var domObj = that.$(fieldsToMark[index]);
                     if (domObj)
-                        domObj.addClass("input-validation-error");
+                        domObj.addClass("has-error");*/
+
+                    var domObj = that.$("div[data-valfor='" + index + "']");
+                    if (domObj)
+                        domObj.addClass("has-error");
+
+
                     //busca el mensaje, si existe lo marca
-                    var domMessage = that.$("span[tuils-val-for='" + index + "']");
+                    /*var domMessage = that.$("div[data-valfor='" + index + "']");
                     if (domMessage) {
                         domMessage.text(errorField);
                         domMessage.addClass("field-validation-error");
-                    }
+                    }*/
                 });
             },
             bindValidation : function()
@@ -171,8 +177,8 @@ define(['underscore', 'backbone'],
                 }, seconds*1000);
             },
             removeErrors: function () {
-                this.$el.find(".input-validation-error").removeClass("input-validation-error");
-                this.$el.find(".field-validation-error").text("").removeClass("input-validation-error");
+                this.$el.find(".has-error").removeClass("has-error");
+                this.$el.find(".field-validation-error").text("").removeClass("has-error");
             },
             //Mueve el cursor y la vista del usuario a una posición de un objeto
             scrollFocusObject: function (selector, addPixels) {

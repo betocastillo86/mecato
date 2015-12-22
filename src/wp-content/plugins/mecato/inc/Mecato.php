@@ -13,12 +13,15 @@ class Mecato
     protected $viewEditRestaurant = null;
     protected $viewEditMenu = null;
 
+    protected $apiRegister = null;
+
     function __construct()
     {
         $this->viewEditRestaurant = new EditRestaurantView();
         //$this->viewEditMenu = new BikeDeliveryApi();
 
         add_action('wp_head', array($this, 'add_main_js'));
+        $this->apiRegister = new ApiRestaurant();
     }
 
     function add_main_js()

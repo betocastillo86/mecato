@@ -6,6 +6,7 @@
  * Date: 12/19/2015
  * Time: 11:44 AM
  */
+require_once(MECATO_PLUGIN_DIR.'inc/services/RestaurantService.php');
 class EditRestaurantView
 {
     function __construct()
@@ -15,11 +16,14 @@ class EditRestaurantView
 
     function show_view($attr)
     {
-
+        if(isset($_POST['restaurant_name']))
+        {
+            $this->save_restaurant();
+        }
 
         ?>
         <div id="divMainSection">
-            <form >
+            <form action="" method="post" >
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="panel panel-default">
@@ -54,7 +58,33 @@ class EditRestaurantView
 
     }
 
+    function save_restaurant()
+    {
+        if(isset($_POST['restaurant_name']) && isset($_POST['restaurant_address'])
+            && isset($_POST['restaurant_lat']) && isset($_POST['restaurant_lon']))
+        {
+            $model = new Restaurant();
+            $model->name = $_POST['restaurant_name'];
+            $model->address = $_POST['restaurant_address'];
+            $model->schedule = $_POST['restaurant_schedule'];
+            $model->lat = $_POST['restaurant_lat'];
+            $model->lon = $_POST['restaurant_lon'];
+            $model->userId = get_current_user_id();
 
+            if(isset($_POST['restaurant_phone']))
+                $model->phone = $_POST['restaurant_phone'];
+
+            //Guarda el restaurante
+            $restaurantService = new RestaurantService();
+            $restaurantService->insertRestaurant($model);
+        }
+        else
+        {
+            ?>
+                <h2>Los datos son invalidos</h2>
+            <?php
+        }
+    }
     /***
      * Muestra el mapa con las funcionalidades
      */
@@ -88,8 +118,9 @@ class EditRestaurantView
     function basic_order_form()
     {
 
-        wp_enqueue_style("mecatocss",MECATO_PLUGIN_URL.'css/mecato.css' );
-        /*wp_enqueue_script("google-maps",'http://maps.google.com/maps/api/js?sensor=false' );
+        wp_enqueue_style("mecatocss",MECATO_PLUGIN_URL.'inc/css/mecato.css' );
+        wp_enqueue_style("mecatocss_weekline",MECATO_PLUGIN_URL.'inc/css/jquery.weekline.css' );
+        /*wp_enqueue_script("google-maps",'http://maps.googl1e.com/maps/api/js?sensor=false' );
         wp_enqueue_script("handlebars",'https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.4/handlebars.min.js' );
         wp_enqueue_script("jqueryvalidate",'https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.13.1/jquery.validate.min.js' );*/
 
@@ -98,50 +129,73 @@ class EditRestaurantView
 
         ?>
 
-        <div class="col-xs-12 addressField">
-            <div class="form-group">
-                <label for="address_from">Direcci&oacute;n origen</label>
-                <input id="address_from" name="address_from" type="text" data-var="address_from" class="form-control required"  maxlength="50" />
-                <input id="address_from_lat" type="hidden" />
-                <input id="address_from_lon" type="hidden" />
+        <div class="col-xs-12 addressField" data-valfor="name">
+            <div class="form-group required">
+                <label for="restaurant_name" class="control-label">Nombre</label>
+                <input id="restaurant_name" name="restaurant_name" type="text" data-var="restaurant_name" class="form-control required"  maxlength="50" />
+                <input id="restaurant_lat" name="restaurant_lat" type="hidden" />
+                <input id="restaurant_lon" name="restaurant_lon" type="hidden" />
             </div>
         </div>
-        <div class="col-xs-12 addressField">
+        <div class="col-xs-12 addressField" data-valfor="address">
+            <div class="form-group required">
+                <label for="restaurant_address"  class="control-label">Direcci&oacute;n</label>
+                <input id="restaurant_address" name="restaurant_address" type="text" data-var="restaurant_address" class="form-control required"   maxlength="50" />
+            </div>
+        </div>
+        <div class="col-xs-12 addressField" data-valfor="phone">
             <div class="form-group">
-                <label for="address_to">Direcci&oacute;n destino</label>
+                <label for="restaurant_phone"  class="control-label">Telefono</label>
+                <input id="restaurant_phone" name="restaurant_phone" type="text" data-var="restaurant_phone" class="form-control required" data-val="int"   maxlength="50" />
+            </div>
+        </div>
+        <div class="col-xs-12 addressField"  data-valfor="schedule">
+            <div class="form-group">
+                <label for="restaurant_schedule"  class="control-label">Horario</label>
+                <span class="spanSchedule"></span>
+                De <?php $this->hour_selector("Open", 8) ?>
+                a <?php $this->hour_selector("Close", 17) ?>
+                <input id="restaurant_schedule" name="restaurant_schedule" type="hidden" >
+            </div>
+        </div>
 
-                <input id="address_to" name="address_to" type="text" data-var="address_to" class="form-control required"   maxlength="50" />
-                <input id="address_to_lat" type="hidden" />
-                <input id="address_to_lon" type="hidden" />
-            </div>
-        </div>
-        <div class="col-xs-6">
-            <div class="form-group">
-                <label for="order_day">D&iacute;a</label>
-                <input id="order_day" type="text" name="order_day" data-var="order_day" class="form-control required" value="<?php echo current_time('Y/m/d') ?>"   />
-            </div>
-        </div>
-        <div class="col-xs-6">
-            <div class="form-group">
-                <label for="order_time">Hora</label>
-                <input id="order_time" type="text" name="order_time" data-var="order_time" class="form-control required" data-minute-step="10" value="<?php echo current_time('timestamp') ?>"  />
-            </div>
-        </div>
-        <div class="col-xs-12">
-            <div class="form-group">
-                <label for="order_description">Descripci&oacute;n</label>
-                <textarea id="order_description" data-var="order_description" name="order_description" class="form-control required" placeholder="Describe como mejor te parezca tu envio"></textarea>
-            </div>
-        </div>
-        <div class="col-xs-12">
-            <div class="form-group">
-                <label for="order_value">Valor del objeto a env&iacute;ar</label>
-                <input id="order_value" type="text" name="order_value" data-var="order_time" class="form-control required" for-type="number" maxlength="20"   />
-            </div>
-        </div>
+
         <div class="col-sm-offset-2 col-sm-12">
-            <p><input type="button" id="btnNewService" class="btn btn-lg btn-success"  role="button" value="Solicitar Servicio"/></p>
+            <p><input type="button" id="btnNewService" class="btn btn-lg btn-success"  role="button" value="Guardar Restaurante"/></p>
+
         </div>
+        <style>
+            .form-group.required .control-label:after {
+                content:"*";
+                color:red;
+            }
+        </style>
+        <?php
+    }
+
+
+    /***
+     * Muestra un combo con la información del las horas del dia
+     * @param $name String nombre del combo, ya sea horas para abrir o para cerrar
+     * @param $defaultHour int Hora por defecto
+     */
+    function hour_selector($name, $defaultHour)
+    {
+        ?>
+        <select id="txt<?php echo $name ?>Hour" style="width:120px" class="timeHourSchedule">
+            <?php
+            for ($i = 0; $i < 24; $i++)
+            {
+                $iText = $i < 10 ? "0" + $i : $i;
+                $selected = $defaultHour == $i ?"selected" : "";
+
+            ?>
+            <option <?php echo $selected ?>><?php echo $iText ?>:00</option>
+            <option><?php echo $iText ?>:30</option>
+            <?php
+                }
+            ?>
+        </select>
         <?php
     }
 
