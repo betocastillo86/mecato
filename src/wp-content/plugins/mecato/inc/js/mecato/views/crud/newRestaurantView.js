@@ -17,7 +17,9 @@ define(['jquery', 'underscore', 'baseView', 'mecato/models/crud/newRestaurantMod
                 '#restaurant_address' : 'address',
                 '#restaurant_phone' : 'phone',
                 '#restaurant_lat' : 'lat',
-                '#restaurant_lon' : 'lon'
+                '#restaurant_lon' : 'lon',
+                '#restaurant_schedule' : 'schedule'
+
             },
 
             lat : undefined,
@@ -55,6 +57,7 @@ define(['jquery', 'underscore', 'baseView', 'mecato/models/crud/newRestaurantMod
                         that.updateSchedule();
                     }
                 });
+
             },
             updateSchedule: function () {
 
@@ -95,7 +98,7 @@ define(['jquery', 'underscore', 'baseView', 'mecato/models/crud/newRestaurantMod
                 //this.loadCity();
             },
             setSchedule: function () {
-                var scheduleParts = this.model.get('Schedule').replace(/,\s/g,',').split(' ');
+                var scheduleParts = this.model.get('schedule').replace(/,\s/g,',').split(' ');
                 var days = scheduleParts[0];
                 var openHour = scheduleParts[1].split('-')[0];
                 var closeHour = scheduleParts[1].split('-')[1];
@@ -195,8 +198,9 @@ define(['jquery', 'underscore', 'baseView', 'mecato/models/crud/newRestaurantMod
                 }
             },
             render : function(){
-                this.stickThem();
+                this.stickThem(true);
                 this.bindValidation();
+                this.setSchedule();
             }
         });
 

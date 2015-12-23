@@ -6,63 +6,106 @@
  * Date: 12/19/2015
  * Time: 11:44 AM
  */
-require_once(MECATO_PLUGIN_DIR.'inc/services/RestaurantService.php');
+require_once(MECATO_PLUGIN_DIR . 'inc/services/RestaurantService.php');
+
 class EditRestaurantView
 {
+    private $restaurantService;
+
     function __construct()
     {
         add_shortcode('mecato_edit_restaurant', array($this, 'show_view'));
     }
 
+
     function show_view($attr)
     {
-        if(isset($_POST['restaurant_name']))
-        {
-            $this->save_restaurant();
+        $this->restaurantService = new RestaurantService();
+
+        if (isset($_POST['restaurant_name'])) {
+            $savedRestaurant = $this->save_restaurant();
+            if (isset($savedRestaurant) && $savedRestaurant->id > 0) {
+                $this->show_confirm_saved($savedRestaurant);
+            }
+        } else {
+            //Si viene el id por querystring es editar y no muestra toda la información
+            $isEdit = isset($_GET['id']);
+
+            //Consulta el restaurante
+            $restaurant = null;
+            if ($isEdit) {
+                $restaurant = $this->restaurantService->getRestaurantById($_GET['id']);
+                //Si el restaurante no existe lo envia al home
+                if (!isset($restaurant)) {
+                    wp_redirect(home_url());
+                    exit;
+                }
+
+            }
+
+
+            ?>
+            <div id="divMainSection">
+                <form action="" method="post">
+                    <div class="row">
+
+                        <?php
+                        if (!$isEdit) {
+                            $this->show_map();
+                        }
+
+                        $this->show_basic_order_form($restaurant);
+                        ?>
+
+                    </div>
+                    <div id="divModalNewOrder"></div>
+                </form>
+            </div>
+
+            <?php
         }
 
-        ?>
-        <div id="divMainSection">
-            <form action="" method="post" >
-                <div class="row">
-                    <div class="col-sm-6">
-                        <div class="panel panel-default">
-
-                            <div class="panel-heading">
-                                <h3 class="panel-title">Ubicaci&oacute;n</h3>
-                            </div>
-
-                            <div class="panel-body">
-                                <?php $this->show_map() ?>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="panel panel-default">
-
-                            <div class="panel-heading">
-                                <h3 class="panel-title">Detalle del restaurante</h3>
-                            </div>
-
-                            <div class="panel-body">
-                                <?php $this->basic_order_form() ?>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div id="divModalNewOrder"></div>
-            </form>
-        </div>
-
-    <?php
 
     }
 
+    /***
+     * Informa al usuario que el restaurante quedó guardado
+     * @param $restaurant Restaurant Información del restaurante guardado
+     */
+    function show_confirm_saved($restaurant)
+    {
+        ?>
+        <div class="alert alert-success" role="alert">
+            <strong>Muchas gracias!</strong> Fue guardado el restaurante
+            <strong><?php echo $restaurant->name; ?></strong>.
+        </div>
+        <div class="col-md-12 center-block">
+            <p>
+                Ayudanos a completar la información de <strong><?php echo $restaurant->name; ?></strong> creando un
+                plato.
+            </p>
+            <button id="singlebutton" name="singlebutton" class="btn btn-lg btn-primary center-block">
+                Crear un plato
+            </button>
+            <p>
+                Si conoces más información acerca de este restaurante ayudanos completandola aquí.
+            </p>
+            <button id="singlebutton" name="singlebutton" class="btn btn-xs btn-default center-block">
+                Actualizar restaurante
+            </button>
+        </div>
+        <?php
+    }
+
+    /***
+     * Mapea y envia a guardar el restauramnte
+     * @return null|Restaurant Restaurante que fue guardado
+     */
     function save_restaurant()
     {
-        if(isset($_POST['restaurant_name']) && isset($_POST['restaurant_address'])
-            && isset($_POST['restaurant_lat']) && isset($_POST['restaurant_lon']))
-        {
+        if (isset($_POST['restaurant_name']) && isset($_POST['restaurant_address'])
+            && isset($_POST['restaurant_lat']) && isset($_POST['restaurant_lon'])
+        ) {
             $model = new Restaurant();
             $model->name = $_POST['restaurant_name'];
             $model->address = $_POST['restaurant_address'];
@@ -71,20 +114,19 @@ class EditRestaurantView
             $model->lon = $_POST['restaurant_lon'];
             $model->userId = get_current_user_id();
 
-            if(isset($_POST['restaurant_phone']))
+            if (isset($_POST['restaurant_phone']))
                 $model->phone = $_POST['restaurant_phone'];
 
             //Guarda el restaurante
-            $restaurantService = new RestaurantService();
-            $restaurantService->insertRestaurant($model);
-        }
-        else
-        {
+            return $this->restaurantService->insertRestaurant($model);
+        } else {
             ?>
-                <h2>Los datos son invalidos</h2>
+            <h2>Los datos son invalidos</h2>
             <?php
+            return null;
         }
     }
+
     /***
      * Muestra el mapa con las funcionalidades
      */
@@ -94,19 +136,42 @@ class EditRestaurantView
 
 
         <style>
-            body { background-color:#CCC }
-            #map_location {  height: 440px;
+            body {
+                background-color: #CCC
+            }
+
+            #map_location {
+                height: 440px;
                 padding: 20px;
                 border: 2px solid #CCC;
                 margin-bottom: 20px;
-                background-color:#FFF }
-            #map_location { height: 400px }
+                background-color: #FFF
+            }
+
+            #map_location {
+                height: 400px
+            }
+
             @media all and (max-width: 991px) {
-                #map_location  { height: 650px }
+                #map_location {
+                    height: 650px
+                }
             }
         </style>
+        <div class="col-sm-6">
+            <div class="panel panel-default">
 
-        <div id="map_location"></div>
+                <div class="panel-heading">
+                    <h3 class="panel-title">Ubicaci&oacute;n</h3>
+                </div>
+
+                <div class="panel-body">
+
+                    <div id="map_location"></div>
+
+                </div>
+            </div>
+        </div>
 
         <?php
     }
@@ -114,60 +179,74 @@ class EditRestaurantView
 
     /***
      * Muestra la informaci?n b?sica del formulario para solicitar un servicio
+     * @param $restaurant Restaurant restaurante a mostrar, puede ser nulo
      */
-    function basic_order_form()
+    function show_basic_order_form($restaurant)
     {
 
-        wp_enqueue_style("mecatocss",MECATO_PLUGIN_URL.'inc/css/mecato.css' );
-        wp_enqueue_style("mecatocss_weekline",MECATO_PLUGIN_URL.'inc/css/jquery.weekline.css' );
+        wp_enqueue_style("mecatocss", MECATO_PLUGIN_URL . 'inc/css/mecato.css');
+        wp_enqueue_style("mecatocss_weekline", MECATO_PLUGIN_URL . 'inc/css/jquery.weekline.css');
         /*wp_enqueue_script("google-maps",'http://maps.googl1e.com/maps/api/js?sensor=false' );
         wp_enqueue_script("handlebars",'https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.4/handlebars.min.js' );
         wp_enqueue_script("jqueryvalidate",'https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.13.1/jquery.validate.min.js' );*/
 
 
-
-
         ?>
+        <div class="col-sm-<?php echo isset($restaurant) ? "12" : "6"; ?>">
+            <div class="panel panel-default">
 
-        <div class="col-xs-12 addressField" data-valfor="name">
-            <div class="form-group required">
-                <label for="restaurant_name" class="control-label">Nombre</label>
-                <input id="restaurant_name" name="restaurant_name" type="text" data-var="restaurant_name" class="form-control required"  maxlength="50" />
-                <input id="restaurant_lat" name="restaurant_lat" type="hidden" />
-                <input id="restaurant_lon" name="restaurant_lon" type="hidden" />
-            </div>
-        </div>
-        <div class="col-xs-12 addressField" data-valfor="address">
-            <div class="form-group required">
-                <label for="restaurant_address"  class="control-label">Direcci&oacute;n</label>
-                <input id="restaurant_address" name="restaurant_address" type="text" data-var="restaurant_address" class="form-control required"   maxlength="50" />
-            </div>
-        </div>
-        <div class="col-xs-12 addressField" data-valfor="phone">
-            <div class="form-group">
-                <label for="restaurant_phone"  class="control-label">Telefono</label>
-                <input id="restaurant_phone" name="restaurant_phone" type="text" data-var="restaurant_phone" class="form-control required" data-val="int"   maxlength="50" />
-            </div>
-        </div>
-        <div class="col-xs-12 addressField"  data-valfor="schedule">
-            <div class="form-group">
-                <label for="restaurant_schedule"  class="control-label">Horario</label>
-                <span class="spanSchedule"></span>
-                De <?php $this->hour_selector("Open", 8) ?>
-                a <?php $this->hour_selector("Close", 17) ?>
-                <input id="restaurant_schedule" name="restaurant_schedule" type="hidden" >
-            </div>
-        </div>
+                <div class="panel-heading">
+                    <h3 class="panel-title">Detalle del restaurante</h3>
+                </div>
+
+                <div class="panel-body">
+                    <div class="col-xs-12 addressField" data-valfor="name">
+                        <div class="form-group required">
+                            <label for="restaurant_name" class="control-label">Nombre</label>
+                            <input id="restaurant_name" name="restaurant_name" type="text" data-var="restaurant_name"
+                                   class="form-control required" maxlength="50" value="<?php echo $restaurant->name ?>"/>
+                            <input id="restaurant_lat" name="restaurant_lat" type="hidden"  value="<?php echo $restaurant->lat ?>"/>
+                            <input id="restaurant_lon" name="restaurant_lon" type="hidden"  value="<?php echo $restaurant->lon ?>"/>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 addressField" data-valfor="address">
+                        <div class="form-group required">
+                            <label for="restaurant_address" class="control-label">Direcci&oacute;n</label>
+                            <input id="restaurant_address" name="restaurant_address" type="text"
+                                   data-var="restaurant_address"
+                                   class="form-control required" maxlength="50"  value="<?php echo $restaurant->address ?>"/>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 addressField" data-valfor="phone">
+                        <div class="form-group">
+                            <label for="restaurant_phone" class="control-label">Telefono</label>
+                            <input id="restaurant_phone" name="restaurant_phone" type="text" data-var="restaurant_phone"
+                                   class="form-control required" data-val="int" maxlength="50"  value="<?php echo $restaurant->phone ?>"/>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 addressField" data-valfor="schedule">
+                        <div class="form-group">
+                            <label for="restaurant_schedule" class="control-label">Horario</label>
+                            <span class="spanSchedule"></span>
+                            De <?php $this->hour_selector("Open", 8) ?>
+                            a <?php $this->hour_selector("Close", 17) ?>
+                            <input id="restaurant_schedule" name="restaurant_schedule" type="hidden"  value="<?php echo $restaurant->schedule ?>">
+                        </div>
+                    </div>
 
 
-        <div class="col-sm-offset-2 col-sm-12">
-            <p><input type="button" id="btnNewService" class="btn btn-lg btn-success"  role="button" value="Guardar Restaurante"/></p>
+                    <div class="col-sm-offset-2 col-sm-12">
+                        <p><input type="button" id="btnNewService" class="btn btn-lg btn-success" role="button"
+                                  value="Guardar Restaurante"/></p>
 
+                    </div>
+                </div>
+            </div>
         </div>
         <style>
             .form-group.required .control-label:after {
-                content:"*";
-                color:red;
+                content: "*";
+                color: red;
             }
         </style>
         <?php
@@ -184,16 +263,15 @@ class EditRestaurantView
         ?>
         <select id="txt<?php echo $name ?>Hour" style="width:120px" class="timeHourSchedule">
             <?php
-            for ($i = 0; $i < 24; $i++)
-            {
+            for ($i = 0; $i < 24; $i++) {
                 $iText = $i < 10 ? "0" + $i : $i;
-                $selected = $defaultHour == $i ?"selected" : "";
+                $selected = $defaultHour == $i ? "selected" : "";
 
-            ?>
-            <option <?php echo $selected ?>><?php echo $iText ?>:00</option>
-            <option><?php echo $iText ?>:30</option>
-            <?php
-                }
+                ?>
+                <option <?php echo $selected ?>><?php echo $iText ?>:00</option>
+                <option><?php echo $iText ?>:30</option>
+                <?php
+            }
             ?>
         </select>
         <?php

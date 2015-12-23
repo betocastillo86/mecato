@@ -8,6 +8,8 @@
  */
 class RestaurantService
 {
+    private $postTypeRestaurant = 'restaurante';
+
     /****
      * Crea un nuevo restaruante
      * @param $restaurant Restaurant datos del restaurante
@@ -37,5 +39,35 @@ class RestaurantService
         update_post_meta($restaurant->id, 'wpcf-lon',$restaurant->lon);
 
         return $restaurant;
+    }
+
+
+    /***
+     * Consulta la información de un restaurante
+     * @param $id int id por el que debe consultar
+     * @return Restaurant Información del restaurante
+     */
+    function getRestaurantById($id)
+    {
+        $post = get_post($id);
+        if(isset($post) && $post->post_type == $this->postTypeRestaurant)
+        {
+            $model = new Restaurant();
+            $model->id = $post->ID;
+            $model->name = $post->post_title;
+
+            $customFields =  get_post_custom($id);
+            $model->address = $customFields['wpcf-address'][0];
+            $model->schedule = $customFields['wpcf-schedule'][0];
+            $model->lat = $customFields['wpcf-lat'][0];
+            $model->lon = $customFields['wpcf-lon'][0];
+            $model->phone = $customFields['wpcf-phone'][0];
+            $model->userId = $post->post_author;
+
+            return $model;
+        }
+        else
+            return null;
+
     }
 }
