@@ -1,9 +1,9 @@
 /**
  * Created by Beto on 12/19/2015.
  */
-define(['jquery', 'underscore', 'baseView', 'mecato/models/crud/newRestaurantModel',
+define(['jquery', 'underscore', 'baseView', 'mecato/models/crud/newRestaurantModel', 'dropZone',
         'jquery.weekline.min','async!maps'],
-    function($, _, BaseView, NewRestaurantModel){
+    function($, _, BaseView, NewRestaurantModel, Dropzone){
 
         var NewRestaurantView = BaseView.extend({
 
@@ -21,7 +21,7 @@ define(['jquery', 'underscore', 'baseView', 'mecato/models/crud/newRestaurantMod
                 '#restaurant_schedule' : 'schedule'
 
             },
-
+            id : undefined,
             lat : undefined,
             lon : undefined,
             map: undefined,
@@ -29,10 +29,23 @@ define(['jquery', 'underscore', 'baseView', 'mecato/models/crud/newRestaurantMod
             marker : undefined,
             geocoder : undefined,
 
-            initialize : function(){
+            initialize : function(args){
+                this.id = args.id;
                 this.model = new NewRestaurantModel();
-                this.getCurrentLocation();
-                this.loadSchedule();
+
+                //Actualiza el valor del modelo si está editando
+                if(this.id != undefined)
+                {
+                    this.model.set('Id', this.id);
+                    this.loadSchedule();
+                    this.loadImages();
+                }
+                else
+                {
+                    this.getCurrentLocation();
+                }
+
+
                 this.render();
             },
             getCurrentLocation: function () {
@@ -48,6 +61,28 @@ define(['jquery', 'underscore', 'baseView', 'mecato/models/crud/newRestaurantMod
                     //Si no tiene geolocalización lo ubica en la posición por defecto
                     this.updateLocation();
                 }
+            },
+            loadImages : function(){
+                Dropzone.autoDiscover = false;
+                var that = this;
+                this.$('.dropzone').dropzone(
+                    {
+                        url: '/index.php/wp-json//api/restaurants/'+that.id+'/images',
+                        complete: function (a, b, c) {
+                            //debugger;
+                            /*if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
+                                that.lista.fetch();
+                            }*/
+                            console.log(a);
+                        },
+                        completemultiple : function(){
+                            that.$('#messageUploadOk').show();
+                        },
+                        error : function(a, b, c){
+                            that.$('#messageUploadError').show();
+                        }
+                    }
+                );
             },
             loadSchedule: function () {
                 var that = this;
@@ -98,6 +133,9 @@ define(['jquery', 'underscore', 'baseView', 'mecato/models/crud/newRestaurantMod
                 //this.loadCity();
             },
             setSchedule: function () {
+                if(!this.model.get('schedule') ||this.model.get('schedule').length == 0)
+                    return;
+
                 var scheduleParts = this.model.get('schedule').replace(/,\s/g,',').split(' ');
                 var days = scheduleParts[0];
                 var openHour = scheduleParts[1].split('-')[0];
@@ -200,7 +238,9 @@ define(['jquery', 'underscore', 'baseView', 'mecato/models/crud/newRestaurantMod
             render : function(){
                 this.stickThem(true);
                 this.bindValidation();
-                this.setSchedule();
+
+                if(this.id != undefined)
+                    this.setSchedule();
             }
         });
 

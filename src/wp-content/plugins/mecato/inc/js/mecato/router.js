@@ -8,11 +8,12 @@
             defaultEl: "#divMainSection",
 
             routes: {
-                "index.php/crear-restaurante(/)": "newRestaurant"
+                "index.php/crear-restaurante(/)(?id=:id)": "newRestaurant",
+                "index.php/actualizar-restaurante(/)(?id=:id)": "newRestaurant"
             },
-            newRestaurant : function()
+            newRestaurant : function(id)
             {
-                this.currentView = new NewRestaurantView({el : this.defaultEl });
+                this.currentView = new NewRestaurantView({el : this.defaultEl, id : id != undefined ? parseInt(id) : undefined });
             }
         });
 

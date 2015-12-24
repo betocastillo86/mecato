@@ -10,6 +10,9 @@ require_once(MECATO_PLUGIN_DIR . 'inc/services/RestaurantService.php');
 
 class EditRestaurantView
 {
+    /**
+     * @var RestaurantService restaurante
+     */
     private $restaurantService;
 
     function __construct()
@@ -87,12 +90,38 @@ class EditRestaurantView
             <button id="singlebutton" name="singlebutton" class="btn btn-lg btn-primary center-block">
                 Crear un plato
             </button>
-            <p>
-                Si conoces más información acerca de este restaurante ayudanos completandola aquí.
-            </p>
-            <button id="singlebutton" name="singlebutton" class="btn btn-xs btn-default center-block">
-                Actualizar restaurante
-            </button>
+
+            <?php
+                if(!isset($_REQUEST['id']))
+                {
+                    ?>
+                    <p>
+                        Si conoces más información acerca de este restaurante ayudanos completandola aquí.
+                    </p>
+
+                    <div style="text-align: center;">
+                        <a id="singlebutton" name="singlebutton" class="btn btn-xs btn-default " role="button"
+                           href="<?php echo get_permalink(MECATO_PLUGIN_PAGE_EDIT_REST) ?>?id=<?php echo $restaurant->id ?>">
+                            Actualizar restaurante
+                        </a>
+                    </div>
+                    <?php
+                }
+                else
+                {
+                    ?>
+                    <div style="text-align: center;">
+                        <a id="singlebutton" name="singlebutton" class="btn btn-xs btn-default " role="button"
+                           href="<?php echo get_site_url() ?>">
+                            Ir al inicio
+                        </a>
+                    </div>
+                    <?php
+                }
+            ?>
+
+
+
         </div>
         <?php
     }
@@ -107,18 +136,28 @@ class EditRestaurantView
             && isset($_POST['restaurant_lat']) && isset($_POST['restaurant_lon'])
         ) {
             $model = new Restaurant();
+
             $model->name = $_POST['restaurant_name'];
             $model->address = $_POST['restaurant_address'];
             $model->schedule = $_POST['restaurant_schedule'];
             $model->lat = $_POST['restaurant_lat'];
             $model->lon = $_POST['restaurant_lon'];
+            $model->description = $_POST['restaurant_description'];
             $model->userId = get_current_user_id();
 
             if (isset($_POST['restaurant_phone']))
                 $model->phone = $_POST['restaurant_phone'];
 
-            //Guarda el restaurante
-            return $this->restaurantService->insertRestaurant($model);
+            //Actualiza o inserta el restaurante
+            if (isset($_REQUEST['id'])) {
+                $model->id = $_REQUEST['id'];
+                return $this->restaurantService->updateRestaurant($model);
+            } else {
+                //Guarda el restaurante
+                return $this->restaurantService->insertRestaurant($model);
+            }
+
+
         } else {
             ?>
             <h2>Los datos son invalidos</h2>
@@ -200,13 +239,34 @@ class EditRestaurantView
                 </div>
 
                 <div class="panel-body">
+
+
+                        <?php
+                            if($restaurant != null)
+                            {
+                                ?>
+                                <div  class="col-xs-12" style="text-align: center;">
+                                    <a id="singlebutton" name="singlebutton" class="btn btn-xs btn-primary " role="button"
+                                       href="<?php echo get_permalink(MECATO_PLUGIN_PAGE_CREATE_MENU) ?>?restId=<?php echo $restaurant->id ?>">
+                                        Agregar plato
+                                    </a>
+                                </div>
+                                <?php
+                            }
+                        ?>
+
+
+
                     <div class="col-xs-12 addressField" data-valfor="name">
                         <div class="form-group required">
                             <label for="restaurant_name" class="control-label">Nombre</label>
                             <input id="restaurant_name" name="restaurant_name" type="text" data-var="restaurant_name"
-                                   class="form-control required" maxlength="50" value="<?php echo $restaurant->name ?>"/>
-                            <input id="restaurant_lat" name="restaurant_lat" type="hidden"  value="<?php echo $restaurant->lat ?>"/>
-                            <input id="restaurant_lon" name="restaurant_lon" type="hidden"  value="<?php echo $restaurant->lon ?>"/>
+                                   class="form-control required" maxlength="50"
+                                   value="<?php echo $restaurant->name ?>"/>
+                            <input id="restaurant_lat" name="restaurant_lat" type="hidden"
+                                   value="<?php echo $restaurant->lat ?>"/>
+                            <input id="restaurant_lon" name="restaurant_lon" type="hidden"
+                                   value="<?php echo $restaurant->lon ?>"/>
                         </div>
                     </div>
                     <div class="col-xs-12 addressField" data-valfor="address">
@@ -214,30 +274,38 @@ class EditRestaurantView
                             <label for="restaurant_address" class="control-label">Direcci&oacute;n</label>
                             <input id="restaurant_address" name="restaurant_address" type="text"
                                    data-var="restaurant_address"
-                                   class="form-control required" maxlength="50"  value="<?php echo $restaurant->address ?>"/>
+                                   class="form-control required" maxlength="50"
+                                   value="<?php echo $restaurant->address ?>"/>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 addressField" data-valfor="description">
+                        <div class="form-group">
+                            <label for="restaurant_description" class="control-label">Descripción</label>
+                            <textarea id="restaurant_description" name="restaurant_description" type="text"
+                                      data-var="restaurant_description"
+                                      class="form-control required"
+                                      maxlength="500"><?php echo $restaurant->description ?></textarea>
                         </div>
                     </div>
                     <div class="col-xs-12 addressField" data-valfor="phone">
                         <div class="form-group">
                             <label for="restaurant_phone" class="control-label">Telefono</label>
                             <input id="restaurant_phone" name="restaurant_phone" type="text" data-var="restaurant_phone"
-                                   class="form-control required" data-val="int" maxlength="50"  value="<?php echo $restaurant->phone ?>"/>
-                        </div>
-                    </div>
-                    <div class="col-xs-12 addressField" data-valfor="schedule">
-                        <div class="form-group">
-                            <label for="restaurant_schedule" class="control-label">Horario</label>
-                            <span class="spanSchedule"></span>
-                            De <?php $this->hour_selector("Open", 8) ?>
-                            a <?php $this->hour_selector("Close", 17) ?>
-                            <input id="restaurant_schedule" name="restaurant_schedule" type="hidden"  value="<?php echo $restaurant->schedule ?>">
+                                   class="form-control required" data-val="int" maxlength="50"
+                                   value="<?php echo $restaurant->phone ?>"/>
                         </div>
                     </div>
 
+                    <?php
+                    if ($restaurant != null) {
+                        $this->show_edit_form_fields($restaurant);
+                    }
+                    ?>
 
                     <div class="col-sm-offset-2 col-sm-12">
                         <p><input type="button" id="btnNewService" class="btn btn-lg btn-success" role="button"
-                                  value="Guardar Restaurante"/></p>
+                                  value="<?php echo($restaurant != null ? "Actualizar restaurante" : "Guardar Restaurante") ?>"/>
+                        </p>
 
                     </div>
                 </div>
@@ -248,8 +316,64 @@ class EditRestaurantView
                 content: "*";
                 color: red;
             }
+            /*
+            #dropZone {
+                background: gray;
+                border: black dashed 3px;
+                width: 200px;
+                padding: 50px;
+                text-align: center;
+                color: white;
+            }*/
         </style>
+
         <?php
+    }
+
+    /***
+     * Muestra el resto de la información
+     * @param $restaurant Restaurant Información del restaurante a actualizar
+     */
+    function show_edit_form_fields($restaurant)
+    {
+        wp_enqueue_style("mecatocss_dropzone", MECATO_PLUGIN_URL . 'inc/css/dropzone.css');
+        
+        
+        ?>
+        <style>
+            .dz-details{
+                display: none !important;
+            }
+        </style>
+        
+        <div class="col-xs-12 addressField" data-valfor="schedule">
+            <div class="form-group">
+                <label for="restaurant_schedule" class="control-label">Horario</label>
+                <span class="spanSchedule"></span>
+                De <?php $this->hour_selector("Open", 8) ?>
+                a <?php $this->hour_selector("Close", 17) ?>
+                <input id="restaurant_schedule" name="restaurant_schedule" type="hidden"
+                       value="<?php echo $restaurant->schedule ?>">
+            </div>
+        </div>
+        <div class="col-xs-12">
+            <div class="dropzone" id="dropzoneForm">
+                <div class="fallback">
+                    <input name="file" type="file" multiple />
+                    <input type="submit" value="Upload" />
+                </div>
+                <div class="dz-message">Selecciona o arrastra los archivos del restaurante</div>
+            </div>
+        </div>
+        <div id="messageUploadOk" class="alert alert-success" role="alert" style="display:none">
+            <strong>Muchas gracias!</strong> Los archivos fueron cargados correctamente.
+        </div>
+        <div id="messageUploadError" class="alert alert-error" role="alert" style="display:none">
+            <strong>Muchas gracias!</strong> Los archivos fueron cargados correctamente.
+        </div>
+
+        <?php
+
     }
 
 

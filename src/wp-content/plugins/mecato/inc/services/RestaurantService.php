@@ -20,7 +20,7 @@ class RestaurantService
 
         $post = array(
             'post_title' => $restaurant->name,
-            'post_content' => $restaurant->name,
+            'post_content' => $restaurant->description,
             'post_status' => 'publish',
             'post_author' => $restaurant->userId,
             'post_type' => 'restaurante'
@@ -28,17 +28,45 @@ class RestaurantService
 
         $restaurant->id = wp_insert_post($post);
 
+        $this->updateFields($restaurant);
+
+        return $restaurant;
+    }
+
+    /****
+     * Actualiza los datos de un restaurante
+     * @param $restaurant Restaurant
+     */
+    function updateRestaurant($restaurant)
+    {
+        $post = array(
+            'ID' => $restaurant->id,
+            'post_title' => $restaurant->name,
+            'post_content' => $restaurant->description,
+        );
+
+        wp_update_post($post);
+
+        $this->updateFields($restaurant);
+
+        return $restaurant;
+    }
+
+    /****
+     * Actualiza los datos adicionales al post de un restaurante
+     * @param $restaurant Restaurant datos del restaurante
+     */
+    private function updateFields($restaurant)
+    {
         if(isset($restaurant->schedule))
-           update_post_meta($restaurant->id, 'wpcf-schedule',$restaurant->schedule);
+            update_post_meta($restaurant->id, 'wpcf-schedule',$restaurant->schedule);
         if(isset($restaurant->address))
-           update_post_meta($restaurant->id, 'wpcf-address',$restaurant->address);
+            update_post_meta($restaurant->id, 'wpcf-address',$restaurant->address);
         if(isset($restaurant->phone))
             update_post_meta($restaurant->id, 'wpcf-phone',$restaurant->phone);
 
         update_post_meta($restaurant->id, 'wpcf-lat',$restaurant->lat);
         update_post_meta($restaurant->id, 'wpcf-lon',$restaurant->lon);
-
-        return $restaurant;
     }
 
 
@@ -55,6 +83,7 @@ class RestaurantService
             $model = new Restaurant();
             $model->id = $post->ID;
             $model->name = $post->post_title;
+            $model->description = $post->post_content;
 
             $customFields =  get_post_custom($id);
             $model->address = $customFields['wpcf-address'][0];

@@ -33,7 +33,8 @@ define(['underscore', 'backbone'],
                 phone :'Teléfono',
                 schedule : 'Horario',
                 lat : 'Latitud',
-                lon : 'Longitude'
+                lon : 'Longitud',
+                description :'Descripción'
             }
         });
 

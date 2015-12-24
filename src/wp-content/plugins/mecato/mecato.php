@@ -13,6 +13,11 @@ if (defined('URE_PLUGIN_URL')) {
 
 define("MECATO_PLUGIN_URL", plugin_dir_url(__FILE__));
 define("MECATO_PLUGIN_DIR", plugin_dir_path(__FILE__));
+
+define("MECATO_PLUGIN_PAGE_CREATE_REST", 44);
+define("MECATO_PLUGIN_PAGE_EDIT_REST", 82);
+define("MECATO_PLUGIN_PAGE_CREATE_MENU", 112);
+
 define("MECATO_JS_BACKBONE", 'main');
 
 require_once('inc/Mecato.php');

@@ -37,7 +37,7 @@ require.config({
         validations:'backbone-validation.min',
         //handlebars: 'handlebars.min',
         //accounting: 'accounting.min',
-
+        dropZone : 'lib/dropzone.amd',
 
 
         modernizr: 'modernizr.custom.min',
