@@ -28,6 +28,7 @@ require_once('inc/models/Restaurant.php');
 /**Views**/
 
 require_once('inc/views/EditRestaurantView.php');
+require_once('inc/views/EditMenuView.php');
 
 /**Api**/
 require_once('inc/api/ApiRestaurant.php');
