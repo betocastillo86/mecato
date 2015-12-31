@@ -30,6 +30,8 @@ class ImageService
         {
             $urlImage = get_post_meta($response, '_wp_attached_file');
             add_post_meta($postId, 'wpcf-imagenes', get_site_url() .'/wp-content/uploads/'. $urlImage[0]);
+            //Guarda los ids de las imagenes relacionadas
+            add_post_meta($postId, 'wpcf-ids-imagenes', $response);
             return true;
         }
         else

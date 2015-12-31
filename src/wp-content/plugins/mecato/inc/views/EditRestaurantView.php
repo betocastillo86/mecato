@@ -110,11 +110,13 @@ class EditRestaurantView
                 else
                 {
                     ?>
-                    <div style="text-align: center;">
-                        <a id="singlebutton" name="singlebutton" class="btn btn-xs btn-default " role="button"
-                           href="<?php echo get_site_url() ?>">
-                            Ir al inicio
-                        </a>
+                    <div class="row">
+                        <div style="text-align: center;">
+                            <a id="singlebutton" name="singlebutton" class="btn btn-xs btn-default " role="button"
+                               href="<?php echo $restaurant->guid ?>">
+                                Ir al restaurante
+                            </a>
+                        </div>
                     </div>
                     <?php
                 }
@@ -145,19 +147,24 @@ class EditRestaurantView
             $model->description = $_POST['restaurant_description'];
             $model->userId = get_current_user_id();
 
+
             if (isset($_POST['restaurant_phone']))
                 $model->phone = $_POST['restaurant_phone'];
 
             //Actualiza o inserta el restaurante
             if (isset($_REQUEST['id'])) {
                 $model->id = $_REQUEST['id'];
-                return $this->restaurantService->updateRestaurant($model);
+                $model = $this->restaurantService->updateRestaurant($model);
             } else {
                 //Guarda el restaurante
-                return $this->restaurantService->insertRestaurant($model);
+                $model = $this->restaurantService->insertRestaurant($model);
             }
 
+            //consulta nuevamente el post guardado
+            $post = get_post($model->id);
+            $model->guid = $post->guid;
 
+            return $model;
         } else {
             ?>
             <h2>Los datos son invalidos</h2>

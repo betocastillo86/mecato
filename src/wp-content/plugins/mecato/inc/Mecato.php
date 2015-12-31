@@ -13,16 +13,28 @@ class Mecato
     protected $viewEditRestaurant = null;
     protected $viewEditMenu = null;
 
-    protected $apiRegister = null;
+    protected $viewDetailsRestaurant = null;
+
+
+    protected $apiRestaurant = null;
+    protected $apiMenu = null;
 
     function __construct()
     {
         $this->viewEditRestaurant = new EditRestaurantView();
         $this->viewEditMenu = new EditMenuView();
+
+        $this->viewDetailsRestaurant = new DetailsRestaurantView();
+
+        $this->apiRestaurant = new ApiRestaurant();
+        $this->apiMenu = new ApiMenu();
+
         //$this->viewEditMenu = new BikeDeliveryApi();
 
         add_action('wp_head', array($this, 'add_main_js'));
-        $this->apiRegister = new ApiRestaurant();
+        add_filter('the_content', array($this, 'addShortcode'));
+
+
     }
 
     function add_main_js()
@@ -30,5 +42,19 @@ class Mecato
         ?>
         <script data-main="<?php echo MECATO_PLUGIN_URL.'inc/js/mecato/'.MECATO_JS_BACKBONE.'.js' ?>" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.20/require.min.js" async ></script>
         <?php
+    }
+
+    /***
+     * Agrega el shortcode para mostrar detalle dependiendo del tipo de contenido
+     * @param $content
+     * @return string
+     */
+    function addShortcode($content)
+    {
+        if(is_single() && get_post_type() == 'restaurante')
+        {
+            return '[mecato_restaurant_details]';
+        }
+        return $content;
     }
 }

@@ -17,4 +17,6 @@ class Restaurant
     public $schedule;
     public $userId;
     public $description;
+    public $images;
+    public $guid;
 }

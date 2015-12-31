@@ -8,15 +8,19 @@ define(['jquery', 'underscore', 'baseView', 'mecato/models/crud/newMenuModel', '
 
             events:{
                 'click #btnNewService' : 'save',
-                'click .btn[data-radio-name]' : 'changeRadio'
+                'click .btn[data-radio-name]' : 'changeRadio',
+                'click #aMoreTopics' : 'showMoreTopics'
             },
 
             bindings :{
                 '#menu_name' : 'name',
                 '#menu_description' : 'description',
                 '#menu_price' : 'price',
-                '#menu_type' :'type'
+                '#menu_type' :'type',
+                '#menu_topics' :'topics'
             },
+
+            currentDivTopic :0,
 
 
             initialize : function(args){
@@ -55,13 +59,34 @@ define(['jquery', 'underscore', 'baseView', 'mecato/models/crud/newMenuModel', '
                 );
             },
             changeRadio: function(obj){
-                obj = $(obj.currentTarget);
+               obj = $(obj.currentTarget);
                 var radioName = obj.data('radioName');
+                var valueId = obj.data('id');
                 this.$('.btn[data-radio-name="'+radioName+'"]').removeClass('active');
-                this.$('input[name="'+radioName+'"]').val(obj.text());
-                console.log(this.$('input[name="'+radioName+'"]').val());
+
+                if(radioName == 'menu_type')
+                    this.model.set('type', valueId);
+            },
+            showMoreTopics : function(){
+                this.currentDivTopic++;
+                var divsToShow = this.$('.listTopics[data-div="'+this.currentDivTopic+'"]');
+                if(divsToShow.length)
+                    divsToShow.show();
+
+                //Oculta el siguiente en caso que no existan más
+                if(!this.$('.listTopics[data-div="'+(this.currentDivTopic+1)+'"]').length)
+                    this.$('#aMoreTopics').hide();
+            },
+            updateTopics : function(){
+                var topics = '';
+                _.each($('.listTopics button.yesTopic.active'), function(element, index){
+                    if(topics.length > 0) topics += ',';
+                    topics += $(element).data("id");
+                });
+                this.model.set('topics', topics);
             },
             save : function(){
+                this.updateTopics();
                 this.validateControls();
                 if(this.model.isValid())
                     this.$('form').submit();

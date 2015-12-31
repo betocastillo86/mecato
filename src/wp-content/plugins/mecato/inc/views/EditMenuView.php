@@ -50,7 +50,7 @@ class EditMenuView
             if ($isEdit) {
                 $menu = $this->menuService->getMenuById($_GET['id']);
                 //Si el restaurante no existe lo envia al home
-                if (!isset($menu)) {
+                if (!isset($menu) || $menu->restaurantId != $_GET['restId']) {
                     wp_redirect(home_url());
                     exit;
                 }
@@ -74,6 +74,46 @@ class EditMenuView
         }
 
 
+    }
+    /***
+     * Mapea y envia a guardar el plato
+     * @return null|Menu Menu que fue guardado
+     */
+    function save_menu()
+    {
+        if (isset($_POST['menu_name']) && isset($_POST['menu_description'])
+            && isset($_POST['menu_type'])
+        ) {
+            $model = new Menu();
+
+            $model->name = $_POST['menu_name'];
+            $model->menuType = $_POST['menu_type'];
+            $model->description = $_POST['menu_description'];
+            $model->userId = get_current_user_id();
+            $model->restaurantId = $_GET['restId'];
+
+            if (isset($_POST['menu_price']))
+                $model->price = $_POST['menu_price'];
+
+            $model->topics = $_POST['menu_topics'];
+
+
+            //Actualiza o inserta el restaurante
+            if (isset($_REQUEST['id'])) {
+                $model->id = $_REQUEST['id'];
+                return $this->menuService->updateMenu($model);
+            } else {
+                //Guarda el restaurante
+                return $this->menuService->insertMenu($model);
+            }
+
+
+        } else {
+            ?>
+            <h2>Los datos son invalidos</h2>
+            <?php
+            return null;
+        }
     }
 
 
@@ -100,13 +140,13 @@ class EditMenuView
                             <label for="" class="col-md-6 control-label">Que tipo de plato es:</label>
 
                             <div class="col-md-6">
-                                <input name="menu_type" type='hidden' value="Vegetariano"/>
+                                <input id="menu_type" name="menu_type" type='hidden' value="<?php echo MECATO_PLUGIN_PAGE_TAX_VEGETARIAN?>"/>
 
                                 <div class="btn-group" data-toggle="buttons">
-                                    <button type="button" class="btn btn-default active" data-radio-name="menu_type">
+                                    <button type="button" class="btn btn-default active" data-radio-name="menu_type" data-id="<?php echo MECATO_PLUGIN_PAGE_TAX_VEGETARIAN?>">
                                         Vegetariano
                                     </button>
-                                    <button type="button" class="btn btn-default" data-radio-name="menu_type">Vegano
+                                    <button type="button" class="btn btn-default" data-radio-name="menu_type" data-id="<?php echo MECATO_PLUGIN_PAGE_TAX_VEGAN?>">Vegano
                                     </button>
                                 </div>
                             </div>
@@ -145,13 +185,13 @@ class EditMenuView
                         </div>
                     </div>
 
-                    <?php $this->show_topics(); ?>
+                    <?php $this->show_topics($menu); ?>
 
 
                     <?php
-                    /*if ($restaurant != null) {
-                        $this->show_edit_form_fields($restaurant);
-                    }*/
+                    if ($menu != null) {
+                        $this->show_edit_form_fields($menu);
+                    }
                     ?>
 
                     <div class="col-sm-offset-2 col-sm-12">
@@ -173,26 +213,41 @@ class EditMenuView
         <?php
     }
 
-    function show_topics()
+    /***
+     * Muestra todos los ingredientes posibles para el plato. Si es edicion los marca como seleccionados
+     * @param $menu Menu datos del plato
+     */
+    function show_topics($menu)
     {
         //$topics = get_taxonomies(array('name' => 'ingrediente' ));
         $topics = get_terms('ingrediente', array('hide_empty' => false));
 
+
+        //Retorna todos los tags seleccionados por el usuario previamente
+        $topicsSelected = null;
+        if($menu != null)
+            $topicsSelected = array_map(function($arr_menu){ return $arr_menu->slug; }, $menu->topics);
+
         for($i = 0; $i < count($topics); $i++ )
         {
             $topic = $topics[$i];
+
+            //Agrupa  los ingredientes de a 5 para que el usuario pueda ir descubriendo más si lo desea
+            $divNum = intval( $i / 5);
+
+            //Valida si el termino se selecciona o no
+            $selected = $topicsSelected != null ? in_array($topic->slug, $topicsSelected) != null : false;
             ?>
-            <div class="col-xs-12" data-valfor="topics">
+            <div class="col-xs-12 listTopics" data-valfor="topics" data-div="<?php echo $divNum ?>"  <?php echo ($divNum > 0 ? 'style="display:none"' : '') ?>>
                 <div class="form-group">
                     <label for="" class="col-md-6 control-label"><?php echo  $topic->name ?></label>
 
                     <div class="col-md-6">
-                        <input name="menu_type" type='hidden' value="Si"/>
                         <div class="btn-group" data-toggle="buttons">
-                            <button type="button" class="btn btn-default" data-radio-name="menu_topic_<?php echo $topic->term_id ?>">
+                            <button type="button" class="btn btn-default yesTopic <?php echo ($selected ? 'active' : '')?>" data-radio-name="menu_topic_<?php echo $topic->term_id ?>" data-id="<?php echo $topic->slug ?>">
                                 Si
                             </button>
-                            <button type="button" class="btn btn-default active" data-radio-name="menu_topic_<?php echo $topic->term_id ?>">No
+                            <button type="button" class="btn btn-default  <?php echo (!$selected ? 'active' : '')?>" data-radio-name="menu_topic_<?php echo $topic->term_id ?>"  data-id="<?php echo $topic->slug ?>">No
                             </button>
                         </div>
                     </div>
@@ -203,6 +258,105 @@ class EditMenuView
             <?php
         }
 
+        ?>
+            <a id="aMoreTopics" href="javascript:void(0);"  >Mostrar más ingredientes</a>
+            <input name="menu_topics" id="menu_topics" type="hidden" value=""  />
+        <?php
+
+    }
+
+
+    /***
+     * Muestra el resto de la información
+     * @param $menu Menu Información del plato a actualizar
+     */
+    function show_edit_form_fields($menu)
+    {
+        wp_enqueue_style("mecatocss_dropzone", MECATO_PLUGIN_URL . 'inc/css/dropzone.css');
+
+
+        ?>
+        <style>
+            .dz-details{
+                display: none !important;
+            }
+        </style>
+
+        <div class="col-xs-12">
+            <div class="dropzone" id="dropzoneForm">
+                <div class="fallback">
+                    <input name="file" type="file" multiple />
+                    <input type="submit" value="Upload" />
+                </div>
+                <div class="dz-message">Selecciona o arrastra los archivos del plato</div>
+            </div>
+        </div>
+        <div id="messageUploadOk" class="alert alert-success" role="alert" style="display:none">
+            <strong>Muchas gracias!</strong> Los archivos fueron cargados correctamente.
+        </div>
+        <div id="messageUploadError" class="alert alert-error" role="alert" style="display:none">
+            <strong>Muchas gracias!</strong> Los archivos fueron cargados correctamente.
+        </div>
+
+        <?php
+
+    }
+
+    /***
+    * Informa al usuario que el plato quedó guardado
+    * @param $menu Menu Información del plato guardado
+    */
+    function show_confirm_saved($menu)
+    {
+        ?>
+        <div class="alert alert-success" role="alert">
+            <strong>Muchas gracias!</strong> Fue guardado el plato
+            <strong><?php echo $menu->name; ?></strong>.
+        </div>
+        <div class="col-md-12 center-block">
+            <p>
+                Si conoces más platos de este restaurante, ayudanos a completarlos
+            </p>
+            <div style="text-align: center;">
+                <a id="singlebutton" name="singlebutton" class="btn btn-xs btn-default " role="button"
+                   href="<?php echo get_permalink(MECATO_PLUGIN_PAGE_CREATE_MENU) ?>?restId=<?php echo $menu->restaurantId ?>">
+                    Crear plato
+                </a>
+            </div>
+
+            <?php
+            if(!isset($_REQUEST['id']))
+            {
+                ?>
+                <p>
+                    Si conoces restaurantes donde hayan platos vegetarianos o veganos, ayudanos a completar la información aquí.
+                </p>
+
+                <div style="text-align: center;">
+                    <a id="singlebutton" name="singlebutton" class="btn btn-xs btn-default " role="button"
+                       href="<?php echo get_permalink(MECATO_PLUGIN_PAGE_CREATE_REST) ?>">
+                        Crear restaurante
+                    </a>
+                </div>
+                <?php
+            }
+            else
+            {
+                ?>
+                <div style="text-align: center;">
+                    <a id="singlebutton" name="singlebutton" class="btn btn-xs btn-default " role="button"
+                       href="<?php echo get_site_url() ?>">
+                        Ir al inicio
+                    </a>
+                </div>
+                <?php
+            }
+            ?>
+
+
+
+        </div>
+        <?php
     }
 
 }

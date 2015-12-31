@@ -75,7 +75,7 @@ class RestaurantService
      * @param $id int id por el que debe consultar
      * @return Restaurant Información del restaurante
      */
-    function getRestaurantById($id)
+    function getRestaurantById($id = null)
     {
         $post = get_post($id);
         if(isset($post) && $post->post_type == $this->postTypeRestaurant)
@@ -85,12 +85,13 @@ class RestaurantService
             $model->name = $post->post_title;
             $model->description = $post->post_content;
 
-            $customFields =  get_post_custom($id);
+            $customFields =  get_post_custom($post->ID);
             $model->address = $customFields['wpcf-address'][0];
             $model->schedule = $customFields['wpcf-schedule'][0];
             $model->lat = $customFields['wpcf-lat'][0];
             $model->lon = $customFields['wpcf-lon'][0];
             $model->phone = $customFields['wpcf-phone'][0];
+            $model->images = $customFields['wpcf-ids-imagenes'];
             $model->userId = $post->post_author;
 
             return $model;

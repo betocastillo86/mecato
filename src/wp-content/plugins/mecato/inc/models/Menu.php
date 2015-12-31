@@ -12,8 +12,11 @@ class Menu
     public $name;
     public $price;
     public $pictures;
+    public $restaurant;
     public $restaurantId;
     public $description;
     public $menuType;
     public $topics;
+    public $userId;
+    public $guid;
 }
