@@ -18,7 +18,8 @@ define(['jquery', 'underscore', 'baseView', 'mecato/models/crud/newRestaurantMod
                 '#restaurant_phone' : 'phone',
                 '#restaurant_lat' : 'lat',
                 '#restaurant_lon' : 'lon',
-                '#restaurant_schedule' : 'schedule'
+                '#restaurant_schedule' : 'schedule',
+                '#restaurant_city' : 'city'
 
             },
             id : undefined,
@@ -201,21 +202,41 @@ define(['jquery', 'underscore', 'baseView', 'mecato/models/crud/newRestaurantMod
                 if(!this.geocoder)
                     this.geocoder = new google.maps.Geocoder();
                 var that = this;
-                this.geocoder.geocode({ 'latLng': latLng }, function (results, status) {
+                that.geocoder.geocode({ 'latLng': latLng }, function (results, status) {
                     if (status == google.maps.GeocoderStatus.OK) {
                         if (results[0]) {
                             //that.trigger('set-address', results[0].formatted_address);
                             //Se hace un format para las direcciones de Colombia que son más complejas
-                            /*var cityName = '';
+                            var cityName = '';
                             _.each(results[0].address_components, function (element, index) {
-                                if (_.contains(element.types, 'administrative_area_level_1'))
+                                if(cityName == '')
                                 {
-                                    cityName = element.long_name;
-                                    return;
+                                    if (_.contains(element.types, 'locality'))
+                                    {
+                                        cityName = element.long_name;
+                                        return;
+                                    }
+                                    else if (_.contains(element.types, 'administrative_area_level_2'))
+                                    {
+                                        cityName = element.long_name;
+                                        return;
+                                    }
+                                    else if (_.contains(element.types, 'administrative_area_level_1'))
+                                    {
+                                        cityName = element.long_name;
+                                        return;
+                                    }
                                 }
+
                             });
 
-                            that.trigger('set-address', { address: results[0].formatted_address.split(' a ')[0], cityName : cityName });*/
+                            var selectedCity = this.$("#restaurant_city option").filter(function () {
+                                return this.text == cityName;
+                            });
+
+                            that.model.set('city', selectedCity.val());
+
+                            //that.trigger('set-address', { address: results[0].formatted_address.split(' a ')[0], cityName : cityName });
                             that.model.set('address', results[0].formatted_address.split(' a ')[0]);
                         } else {
                             alert('No results found');

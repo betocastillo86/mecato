@@ -104,12 +104,12 @@ class MenuService
      * @param $id
      * @return Menu|null Retorna la informaci�n de un plato especifico
      */
-    function getMenuById($id)
+    function getMenuById($id = null)
     {
         $post = get_post($id);
         if(isset($post) && $post->post_type == $this->postTypeMenu)
         {
-            return prepareModel($post);
+            return $this->prepareModel($post);
         }
         else
             return null;
@@ -128,9 +128,10 @@ class MenuService
         $model->name = $post->post_title;
         $model->description = $post->post_content;
 
-        $customFields =  get_post_custom($post->Id);
+        $customFields =  get_post_custom($post->ID);
         $model->price = $customFields['wpcf-precio'][0];
         $model->restaurantId = $customFields['_wpcf_belongs_restaurante_id'][0];
+        $model->images = $customFields['wpcf-ids-imagenes'];
 
         $model->topics = wp_get_post_terms($id, 'ingrediente');
         $model->menuType = wp_get_post_terms($id, 'tipo-de-plato')[0];

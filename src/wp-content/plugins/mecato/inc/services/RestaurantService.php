@@ -67,6 +67,7 @@ class RestaurantService
 
         update_post_meta($restaurant->id, 'wpcf-lat',$restaurant->lat);
         update_post_meta($restaurant->id, 'wpcf-lon',$restaurant->lon);
+        wp_set_post_terms($restaurant->id, $restaurant->city, 'ciudad');
     }
 
 
@@ -92,6 +93,7 @@ class RestaurantService
             $model->lon = $customFields['wpcf-lon'][0];
             $model->phone = $customFields['wpcf-phone'][0];
             $model->images = $customFields['wpcf-ids-imagenes'];
+            $model->city = wp_get_post_terms($post->ID, 'ciudad')[0];
             $model->userId = $post->post_author;
 
             return $model;

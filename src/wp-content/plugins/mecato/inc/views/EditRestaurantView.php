@@ -87,9 +87,9 @@ class EditRestaurantView
                 Ayudanos a completar la información de <strong><?php echo $restaurant->name; ?></strong> creando un
                 plato.
             </p>
-            <button id="singlebutton" name="singlebutton" class="btn btn-lg btn-primary center-block">
+            <a id="singlebutton" href="<?php echo get_permalink(MECATO_PLUGIN_PAGE_CREATE_MENU).'?restId='.$restaurant->id ?>" class="btn btn-lg btn-primary center-block">
                 Crear un plato
-            </button>
+            </a>
 
             <?php
                 if(!isset($_REQUEST['id']))
@@ -145,6 +145,7 @@ class EditRestaurantView
             $model->lat = $_POST['restaurant_lat'];
             $model->lon = $_POST['restaurant_lon'];
             $model->description = $_POST['restaurant_description'];
+            $model->city = $_POST['restaurant_city'];
             $model->userId = get_current_user_id();
 
 
@@ -178,6 +179,9 @@ class EditRestaurantView
      */
     function show_map()
     {
+
+
+
         ?>
 
 
@@ -218,6 +222,21 @@ class EditRestaurantView
                 </div>
             </div>
         </div>
+        <select id="restaurant_city" name="restaurant_city" style="display:none">
+        <?php
+        $cities = get_terms('ciudad', array('hide_empty' => false));
+
+            foreach($cities as $city)
+            {
+                ?>
+                <option value="<?php echo $city->slug ?>">
+                    <?php echo $city->name ?>
+                </option>
+                <?php
+            }
+
+        ?>
+        </select>
 
         <?php
     }
@@ -310,9 +329,9 @@ class EditRestaurantView
                     ?>
 
                     <div class="col-sm-offset-2 col-sm-12">
-                        <p><input type="button" id="btnNewService" class="btn btn-lg btn-success" role="button"
+                        <input type="button" id="btnNewService" class="btn btn-lg btn-success" role="button"
                                   value="<?php echo($restaurant != null ? "Actualizar restaurante" : "Guardar Restaurante") ?>"/>
-                        </p>
+                        <a href="<?php  echo ($restaurant != null ? get_permalink($restaurant->id) : get_site_url())?>" class="btn btn-lg btn-default">Cancelar</a>
 
                     </div>
                 </div>
@@ -337,6 +356,18 @@ class EditRestaurantView
         <?php
     }
 
+    function show_gallery($restaurant)
+    {
+        ?>
+        <h3 class="entry-title">Imagenes de <?php echo $restaurant->name ?></h3>
+        <?php
+        if(count($restaurant->images) > 0)
+        {
+            $commonView = new CommonView();
+            $commonView->show_gallery($restaurant->images);
+        }
+    }
+
     /***
      * Muestra el resto de la información
      * @param $restaurant Restaurant Información del restaurante a actualizar
@@ -344,8 +375,8 @@ class EditRestaurantView
     function show_edit_form_fields($restaurant)
     {
         wp_enqueue_style("mecatocss_dropzone", MECATO_PLUGIN_URL . 'inc/css/dropzone.css');
-        
-        
+
+
         ?>
         <style>
             .dz-details{
@@ -363,7 +394,10 @@ class EditRestaurantView
                        value="<?php echo $restaurant->schedule ?>">
             </div>
         </div>
-        <div class="col-xs-12">
+        <?php
+            $this->show_gallery($restaurant);
+        ?>
+        <div class="col-xs-12" id="images">
             <div class="dropzone" id="dropzoneForm">
                 <div class="fallback">
                     <input name="file" type="file" multiple />

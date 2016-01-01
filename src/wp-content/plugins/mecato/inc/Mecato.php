@@ -14,6 +14,7 @@ class Mecato
     protected $viewEditMenu = null;
 
     protected $viewDetailsRestaurant = null;
+    protected $viewDetailsMenu = null;
 
 
     protected $apiRestaurant = null;
@@ -25,6 +26,7 @@ class Mecato
         $this->viewEditMenu = new EditMenuView();
 
         $this->viewDetailsRestaurant = new DetailsRestaurantView();
+        $this->viewDetailsMenu = new DetailsMenuView();
 
         $this->apiRestaurant = new ApiRestaurant();
         $this->apiMenu = new ApiMenu();
@@ -51,9 +53,17 @@ class Mecato
      */
     function addShortcode($content)
     {
-        if(is_single() && get_post_type() == 'restaurante')
+        if(is_single())
         {
-            return '[mecato_restaurant_details]';
+            switch (get_post_type())
+            {
+                case 'restaurante':
+                    return '[mecato_restaurant_details]';
+                case 'plato':
+                    return '[mecato_menu_details]';
+                default:
+                    return $content;
+            }
         }
         return $content;
     }

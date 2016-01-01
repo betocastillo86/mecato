@@ -1,5 +1,7 @@
-﻿define(['underscore', 'backbone', 'mecato/views/crud/newRestaurantView', 'mecato/views/crud/newMenuView', 'mecato/views/restaurant/restaurantDetailView'],
-    function (_, Backbone, NewRestaurantView, NewMenuView, RestaurantDetailView) {
+﻿define(['underscore', 'backbone', 'mecato/views/crud/newRestaurantView', 'mecato/views/crud/newMenuView', 'mecato/views/restaurant/restaurantDetailView',
+        'mecato/views/restaurant/menuDetailView'],
+    function (_, Backbone, NewRestaurantView, NewMenuView, RestaurantDetailView,
+              MenuDetailView) {
 
         var MecatoRouter = Backbone.Router.extend({
             currentView: undefined,
@@ -12,7 +14,8 @@
                 "index.php/actualizar-restaurante(/)(?id=:id)": "newRestaurant",
                 "index.php/crear-plato(/)(?id=:id)": "newMenu",
                 "index.php/actualizar-plato(/)(?id=:id)": "newMenu",
-                'index.php/restaurante/:restaurantName(/)' :'restaurantDetail'
+                'index.php/restaurante/:restaurantName(/)' :'restaurantDetail',
+                'index.php/plato/:menuName(/)' :'menuDetail'
             },
             newRestaurant : function(id)
             {
@@ -24,6 +27,9 @@
             },
             restaurantDetail : function(){
                 this.currentView = new RestaurantDetailView({el : this.defaultEl});
+            },
+            menuDetail : function(){
+                this.currentView = new MenuDetailView({el : this.defaultEl});
             },
         });
 

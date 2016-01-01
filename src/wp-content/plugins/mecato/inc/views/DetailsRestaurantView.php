@@ -133,7 +133,7 @@ class DetailsRestaurantView
             ?>
             <div class="alert alert-danger" role="alert">
                 <strong>Oops!</strong> No tenemos fotos de <?php echo $restaurant->name ?>. Ayudanos si tienes.
-                <a href="<?php echo get_permalink(MECATO_PLUGIN_PAGE_EDIT_REST)."?id=".$restaurant->id ?>" class="btn btn-xs btn-danger">Subir fotos</a>
+                <a href="<?php echo get_permalink(MECATO_PLUGIN_PAGE_EDIT_REST)."?id=".$restaurant->id.'#images' ?>" class="btn btn-xs btn-danger">Subir fotos</a>
             </div>
             <?php
         }
@@ -169,7 +169,7 @@ class DetailsRestaurantView
                 <table class="table">
                     <tbody>
                     <tr>
-                        <td><img src="<?php echo MECATO_PLUGIN_URL.'inc/img/icons/address.png' ?>" width="20" height="20" /><?php echo $restaurant->address ?></td>
+                        <td><img src="<?php echo MECATO_PLUGIN_URL.'inc/img/icons/address.png' ?>" width="20" height="20" /><?php echo $restaurant->city->name.' - '. $restaurant->address ?></td>
                         <td><img src="<?php echo MECATO_PLUGIN_URL.'inc/img/icons/phone.png' ?>" width="20" height="20" /><?php echo $restaurant->phone ?></td>
                     </tr>
                     </tbody>

@@ -11,6 +11,7 @@ class Restaurant
     public $id;
     public $name;
     public $address;
+    public $city;
     public $lat;
     public $lon;
     public $phone;

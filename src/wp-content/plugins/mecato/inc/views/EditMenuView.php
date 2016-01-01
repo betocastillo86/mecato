@@ -9,6 +9,7 @@
 
 require_once(MECATO_PLUGIN_DIR . 'inc/services/RestaurantService.php');
 require_once(MECATO_PLUGIN_DIR . 'inc/services/MenuService.php');
+require_once("CommonView.php");
 
 class EditMenuView
 {
@@ -195,10 +196,9 @@ class EditMenuView
                     ?>
 
                     <div class="col-sm-offset-2 col-sm-12">
-                        <p><input type="button" id="btnNewService" class="btn btn-lg btn-success" role="button"
+                        <input type="button" id="btnNewService" class="btn btn-lg btn-success" role="button"
                                   value="<?php echo($menu != null ? "Actualizar plato" : "Guardar plato") ?>"/>
-                        </p>
-
+                        <a href="<?php  echo ($menu != null ? get_permalink($menu->id) : get_permalink($_GET['restId']))?>" class="btn btn-lg btn-default">Cancelar</a>
                     </div>
                 </div>
             </div>
@@ -265,6 +265,17 @@ class EditMenuView
 
     }
 
+    function show_gallery($menu)
+    {
+        ?>
+        <h3 class="entry-title">Imagenes de <?php echo $menu->name ?></h3>
+        <?php
+        if(count($menu->images) > 0)
+        {
+            $commonView = new CommonView();
+            $commonView->show_gallery($menu->images);
+        }
+    }
 
     /***
      * Muestra el resto de la información
@@ -274,7 +285,7 @@ class EditMenuView
     {
         wp_enqueue_style("mecatocss_dropzone", MECATO_PLUGIN_URL . 'inc/css/dropzone.css');
 
-
+        $this->show_gallery($menu);
         ?>
         <style>
             .dz-details{
@@ -282,7 +293,7 @@ class EditMenuView
             }
         </style>
 
-        <div class="col-xs-12">
+        <div class="col-xs-12" id="images">
             <div class="dropzone" id="dropzoneForm">
                 <div class="fallback">
                     <input name="file" type="file" multiple />
@@ -311,7 +322,7 @@ class EditMenuView
         ?>
         <div class="alert alert-success" role="alert">
             <strong>Muchas gracias!</strong> Fue guardado el plato
-            <strong><?php echo $menu->name; ?></strong>.
+            <strong><a href="<?php echo get_permalink($menu->id) ?>"><?php echo $menu->name; ?></a> </strong>.
         </div>
         <div class="col-md-12 center-block">
             <p>

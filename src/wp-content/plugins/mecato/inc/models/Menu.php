@@ -11,7 +11,7 @@ class Menu
     public $id;
     public $name;
     public $price;
-    public $pictures;
+    public $images;
     public $restaurant;
     public $restaurantId;
     public $description;

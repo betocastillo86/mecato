@@ -17,6 +17,8 @@ define("MECATO_PLUGIN_DIR", plugin_dir_path(__FILE__));
 define("MECATO_PLUGIN_PAGE_CREATE_REST", 44);
 define("MECATO_PLUGIN_PAGE_EDIT_REST", 82);
 define("MECATO_PLUGIN_PAGE_CREATE_MENU", 112);
+define("MECATO_PLUGIN_PAGE_EDIT_MENU", 132);
+
 
 define("MECATO_PLUGIN_PAGE_TAX_VEGETARIAN", 'vegetariano');
 define("MECATO_PLUGIN_PAGE_TAX_VEGAN", 'vegano');
@@ -34,6 +36,7 @@ require_once('inc/models/Menu.php');
 require_once('inc/views/EditRestaurantView.php');
 require_once('inc/views/EditMenuView.php');
 require_once('inc/views/DetailsRestaurantView.php');
+require_once('inc/views/DetailsMenuView.php');
 
 /**Api**/
 require_once('inc/api/ApiRestaurant.php');
