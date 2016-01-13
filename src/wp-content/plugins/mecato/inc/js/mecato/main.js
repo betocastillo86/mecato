@@ -9,6 +9,12 @@ require.config({
             deps: ['backbone'],
             exports: 'Backbone'
         },
+        jqueryui :{
+            deps:['jquery']
+        },
+        bootstrap :{
+            deps:['jquery']
+        },
        /* simpleMenu: {
             deps: ['modernizr', 'jquery'],
             exports: 'simpleMenu'
@@ -16,9 +22,12 @@ require.config({
     },
     paths: {
         jquery: [
-            '/wp-includes/js/jquery/jquery.js?ver=1.11.3',
-            'jquery-1.10.2'
+            '/wp-includes/js/jquery/jquery.js?ver=1.11.3'
         ],
+        jqueryui: [
+            '/wp-includes/js/jquery/ui/core.min.js?ver=1.11.4',
+            'jquery-ui-1.10.3.custom.min'
+         ],
         /*jqueryui: [
             'http://code.jquery.com/ui/1.11.4/jquery-ui.min',
             'jquery-ui-1.10.3.custom.min'
@@ -27,8 +36,9 @@ require.config({
             'https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.3/handlebars.amd.min',
             'handlebars.min'
         ],
-
-
+        bootstrap : [
+            '/wp-content/themes/dazzling/inc/js/bootstrap.min.js?ver=4.4'
+        ],
 
         jqueryvalidate: 'jquery.validate.min',
         underscore: 'underscore-min',
@@ -44,7 +54,7 @@ require.config({
 
 
         maps: 'http://maps.google.com/maps/api/js?sensor=false',
-        //handlebarsh: 'handelbars.helpers',
+        handlebarsh: 'handlebars.helpers',
         //Basic Tuils
         router: 'mecato/router',
         baseView : 'mecato/views/baseView'

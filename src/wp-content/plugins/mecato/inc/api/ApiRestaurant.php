@@ -20,21 +20,48 @@ class ApiRestaurant extends WP_REST_Controller
             register_rest_route( 'api', '/restaurants', array(
                 'methods' => 'GET',
                 'callback' => array( $this, 'get_items') ,
+                'args' => array(
+                    'cityId' => array(
+                        'validate_callback' => 'absint',
+                        'required' => true
+                    ),
+                    'menuType' => array(
+                        'validate_callback' => function($value){
+                            return $value == MECATO_PLUGIN_PAGE_TAX_VEGAN || $value == MECATO_PLUGIN_PAGE_TAX_VEGETARIAN || $value == "";
+                        },
+                        'required' => false
+                    )
+                )
             ) );
 
             register_rest_route( 'api', '/restaurants/(?P<id>\d+)/images', array(
                 'methods' => 'POST',
-                'callback' => array( $this, 'upload_images') ,
+                'callback' => array( $this, 'upload_images')
             ) );
-
 
         } );
 
     }
 
+    /***
+     * @param WP_REST_Request $request
+     */
     public function get_items($request)
     {
-        $p = "";
+        $restaurantService = new RestaurantService();
+
+        $params = array('cityId' => $request->get_param('cityId'));
+
+        if(strlen($request->get_param('menuType')) > 0)
+            $params['menuType'] = $request->get_param('menuType');
+
+        //La consulta debe ser de más de tres parametros
+        if(strlen($request->get_param('text')) > 3)
+            $params['text'] = $request->get_param('text');
+
+        $restaurants = $restaurantService->getRestaurants($params);
+
+        return $restaurants;
     }
 
     /***

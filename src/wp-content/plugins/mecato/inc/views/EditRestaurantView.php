@@ -186,9 +186,6 @@ class EditRestaurantView
 
 
         <style>
-            body {
-                background-color: #CCC
-            }
 
             #map_location {
                 height: 440px;
@@ -406,12 +403,7 @@ class EditRestaurantView
                 <div class="dz-message">Selecciona o arrastra los archivos del restaurante</div>
             </div>
         </div>
-        <div id="messageUploadOk" class="alert alert-success" role="alert" style="display:none">
-            <strong>Muchas gracias!</strong> Los archivos fueron cargados correctamente.
-        </div>
-        <div id="messageUploadError" class="alert alert-error" role="alert" style="display:none">
-            <strong>Muchas gracias!</strong> Los archivos fueron cargados correctamente.
-        </div>
+
 
         <?php
 

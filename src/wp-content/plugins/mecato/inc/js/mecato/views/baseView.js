@@ -1,8 +1,9 @@
 /**
  * Created by Beto on 12/19/2015.
  */
-define(['underscore', 'backbone', 'mecato/helpers', 'validations', 'stickit'],
-    function (_, Backbone, Helpers) {
+define(['underscore', 'backbone', 'mecato/helpers','mecato/views/common/confirmMessageView',
+        'validations', 'stickit', 'bootstrap'],
+    function (_, Backbone, Helpers, ConfirmMessageView) {
 
         var BaseView = Backbone.View.extend({
 
@@ -65,7 +66,7 @@ define(['underscore', 'backbone', 'mecato/helpers', 'validations', 'stickit'],
                 model.once("error", this.removeLoading, this);
                 model.once("unauthorized", this.removeLoading, this);
 
-                displayAjaxLoading(true);
+                this.displayAjaxLoading(true);
             },
             handleResize : function(){
                 var that = this;
@@ -80,12 +81,12 @@ define(['underscore', 'backbone', 'mecato/helpers', 'validations', 'stickit'],
             removeLoading : function(){
                 this.$el.find("#divLoadingback").remove();
                 this.$el.find('.loadingBack').removeClass('loadingBack');
-                displayAjaxLoading(false);
+                this.displayAjaxLoading(false);
             },
             //Muestra un mesaje de alerta ya sea con un Resource o con el mensaje directamente
             alert: function (args) {
                 if (!this.viewConfirm)
-                    this.viewConfirm = new ConfirmMessageView();
+                    this.viewConfirm = new ConfirmMessageView({ el : '#mainModal'});
 
                 this.viewConfirm.show(args);
             },
@@ -247,6 +248,14 @@ define(['underscore', 'backbone', 'mecato/helpers', 'validations', 'stickit'],
             isMinSizeMobile: function () {
                 var currentWidth = window.innerWidth || document.documentElement.clientWidth;
                 return currentWidth <= this.minSizeMobileWith;
+            },
+            displayAjaxLoading : function(display) {
+                if (display) {
+                    $("#divFullLoading").addClass('loading');
+                }
+                else {
+                    $("#divFullLoading").removeClass('loading');
+                }
             }
         });
 

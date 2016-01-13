@@ -119,3 +119,10 @@
     }
 }
 /******FIN LOADING*******/
+
+a.activePush{
+    background-color:#1b926c !important;
+}
+a.focus{
+    background-color:#1b926c !important;
+}

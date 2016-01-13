@@ -62,10 +62,14 @@ define(['jquery', 'underscore', 'baseView', 'mecato/models/crud/newMenuModel', '
                obj = $(obj.currentTarget);
                 var radioName = obj.data('radioName');
                 var valueId = obj.data('id');
-                this.$('.btn[data-radio-name="'+radioName+'"]').removeClass('active');
+                this.$('.btn[data-radio-name="'+radioName+'"]').addClass('inactive');
+                obj.removeClass('inactive');
 
                 if(radioName == 'menu_type')
+                {
                     this.model.set('type', valueId);
+                }
+
             },
             showMoreTopics : function(){
                 this.currentDivTopic++;

@@ -54,7 +54,7 @@ class DetailsRestaurantView
         $menuService = new MenuService();
         $menus = $menuService->getMenuByRestaurantId($post->ID);
         ?>
-        <h3 class="entry-title">Platos en <?php echo $post->post_title ?></h3>
+        <h2>Platos en <?php echo $post->post_title ?></h2>
         <?php
         if (count($menus) > 0) {
             ?>
@@ -120,7 +120,7 @@ class DetailsRestaurantView
     {
 
         ?>
-        <h3 class="entry-title">Imagenes de <?php echo $restaurant->name ?></h3>
+        <h2>Imagenes de <?php echo $restaurant->name ?></h2>
         <?php
         if(count($restaurant->images) > 0)
         {
@@ -158,9 +158,8 @@ class DetailsRestaurantView
     function show_location($restaurant)
     {
         ?>
+        <h2>¿Dónde está <?php echo $restaurant->name ?>?</h2>
         <div class="row">
-            <h3 class="entry-title">¿Dónde está <?php echo $restaurant->name ?>?</h3>
-
             <div id="divMap" style="width:100%; height: 150px;"></div>
         </div>
 
@@ -170,8 +169,19 @@ class DetailsRestaurantView
                     <tbody>
                     <tr>
                         <td><img src="<?php echo MECATO_PLUGIN_URL.'inc/img/icons/address.png' ?>" width="20" height="20" /><?php echo $restaurant->city->name.' - '. $restaurant->address ?></td>
-                        <td><img src="<?php echo MECATO_PLUGIN_URL.'inc/img/icons/phone.png' ?>" width="20" height="20" /><?php echo $restaurant->phone ?></td>
+                        <td><img src="<?php echo MECATO_PLUGIN_URL.'inc/img/icons/phone.png' ?>" width="20" height="20" /><?php echo isset($restaurant->phone) ?$restaurant->phone : '-'  ?></td>
                     </tr>
+                    <?php
+                        if(isset($restaurant->schedule))
+                        {
+                            ?>
+                            <tr>
+                                <td><img src="<?php echo MECATO_PLUGIN_URL.'inc/img/icons/calendar.png' ?>" width="20" height="20" /><?php echo $restaurant->schedule ?></td>
+                                <td></td>
+                            </tr>
+                            <?php
+                        }
+                    ?>
                     </tbody>
                 </table>
             </div>

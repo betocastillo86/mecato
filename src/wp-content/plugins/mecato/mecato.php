@@ -33,10 +33,14 @@ require_once('inc/models/Menu.php');
 
 /**Views**/
 
+require_once('inc/views/BaseView.php');
+require_once('inc/views/FooterView.php');
 require_once('inc/views/EditRestaurantView.php');
 require_once('inc/views/EditMenuView.php');
 require_once('inc/views/DetailsRestaurantView.php');
 require_once('inc/views/DetailsMenuView.php');
+require_once('inc/views/SearchRestaurantView.php');
+
 
 /**Api**/
 require_once('inc/api/ApiRestaurant.php');

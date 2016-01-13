@@ -144,10 +144,10 @@ class EditMenuView
                                 <input id="menu_type" name="menu_type" type='hidden' value="<?php echo MECATO_PLUGIN_PAGE_TAX_VEGETARIAN?>"/>
 
                                 <div class="btn-group" data-toggle="buttons">
-                                    <button type="button" class="btn btn-default active" data-radio-name="menu_type" data-id="<?php echo MECATO_PLUGIN_PAGE_TAX_VEGETARIAN?>">
+                                    <button type="button" class="btn btn-default <?php echo $menu->menuType->slug == 'vegano' ? 'inactive' : '' ?>" data-radio-name="menu_type" data-id="<?php echo MECATO_PLUGIN_PAGE_TAX_VEGETARIAN?>">
                                         Vegetariano
                                     </button>
-                                    <button type="button" class="btn btn-default" data-radio-name="menu_type" data-id="<?php echo MECATO_PLUGIN_PAGE_TAX_VEGAN?>">Vegano
+                                    <button type="button" class="btn btn-default <?php echo $menu->menuType->slug == 'vegetariano' ? 'inactive' : '' ?>" data-radio-name="menu_type" data-id="<?php echo MECATO_PLUGIN_PAGE_TAX_VEGAN?>">Vegano
                                     </button>
                                 </div>
                             </div>
@@ -208,6 +208,14 @@ class EditMenuView
                 content: "*";
                 color: red;
             }
+
+            .btn.inactive{
+                background-color:#84C1AD !important;
+            }
+            .btn.focus{
+                background-color:#1b926c !important;
+            }
+
         </style>
 
         <?php
@@ -244,10 +252,10 @@ class EditMenuView
 
                     <div class="col-md-6">
                         <div class="btn-group" data-toggle="buttons">
-                            <button type="button" class="btn btn-default yesTopic <?php echo ($selected ? 'active' : '')?>" data-radio-name="menu_topic_<?php echo $topic->term_id ?>" data-id="<?php echo $topic->slug ?>">
+                            <button type="button" class="btn btn-default yesTopic <?php echo (!$selected ? 'inactive' : '')?>" data-radio-name="menu_topic_<?php echo $topic->term_id ?>" data-id="<?php echo $topic->slug ?>">
                                 Si
                             </button>
-                            <button type="button" class="btn btn-default  <?php echo (!$selected ? 'active' : '')?>" data-radio-name="menu_topic_<?php echo $topic->term_id ?>"  data-id="<?php echo $topic->slug ?>">No
+                            <button type="button" class="btn btn-default  <?php echo ($selected ? 'inactive' : '')?>" data-radio-name="menu_topic_<?php echo $topic->term_id ?>"  data-id="<?php echo $topic->slug ?>">No
                             </button>
                         </div>
                     </div>

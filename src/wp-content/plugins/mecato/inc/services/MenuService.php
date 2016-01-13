@@ -98,6 +98,10 @@ class MenuService
 
         if($updateRestaurant)
             update_post_meta($menu->id, '_wpcf_belongs_restaurante_id',$menu->restaurantId);
+
+        //Actuliza el numero de platos que tiene el restaurante
+        $restaurantService = new RestaurantService();
+        $restaurantService->updateNumMenuByType($menu->restaurantId);
     }
 
     /***

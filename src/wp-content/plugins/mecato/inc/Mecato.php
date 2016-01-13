@@ -15,6 +15,7 @@ class Mecato
 
     protected $viewDetailsRestaurant = null;
     protected $viewDetailsMenu = null;
+    protected $viewSearch = null;
 
 
     protected $apiRestaurant = null;
@@ -27,23 +28,29 @@ class Mecato
 
         $this->viewDetailsRestaurant = new DetailsRestaurantView();
         $this->viewDetailsMenu = new DetailsMenuView();
+        $this->viewSearch = new SearchRestaurantView();
 
         $this->apiRestaurant = new ApiRestaurant();
         $this->apiMenu = new ApiMenu();
 
+
+
         //$this->viewEditMenu = new BikeDeliveryApi();
 
         add_action('wp_head', array($this, 'add_main_js'));
+
         add_filter('the_content', array($this, 'addShortcode'));
-
-
     }
+
 
     function add_main_js()
     {
         ?>
-        <script data-main="<?php echo MECATO_PLUGIN_URL.'inc/js/mecato/'.MECATO_JS_BACKBONE.'.js' ?>" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.20/require.min.js" async ></script>
+        <script data-main="<?php echo MECATO_PLUGIN_URL . 'inc/js/mecato/' . MECATO_JS_BACKBONE . '.js' ?>"
+                src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.20/require.min.js" async></script>
         <?php
+        wp_deregister_script('jquery-ui-core');
+        wp_deregister_script('dazzling-bootstrapjs');
     }
 
     /***
@@ -67,4 +74,5 @@ class Mecato
         }
         return $content;
     }
+
 }

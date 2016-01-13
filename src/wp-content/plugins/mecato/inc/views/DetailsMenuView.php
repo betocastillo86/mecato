@@ -94,7 +94,7 @@ class DetailsMenuView
         $menuService = new MenuService();
         $menus = $menuService->getMenuByRestaurantId($post->ID);
         ?>
-        <h3 class="entry-title">Platos en <?php echo $post->post_title ?></h3>
+        <h2 >Platos en <?php echo $post->post_title ?></h2>
         <?php
         if (count($menus) > 0) {
             ?>
@@ -163,7 +163,7 @@ class DetailsMenuView
     {
 
         ?>
-        <h3 class="entry-title">Imagenes de <?php echo $menu->name ?></h3>
+        <h2 >Imagenes de <?php echo $menu->name ?></h2>
         <?php
         if(count($menu->images) > 0)
         {

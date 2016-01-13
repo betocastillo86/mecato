@@ -20,4 +20,13 @@ class Restaurant
     public $description;
     public $images;
     public $guid;
+    public $thumbnail;
+    /***
+     * @var int numero de platos veganos
+     */
+    public $numVegan;
+    /***
+     * @var int numero de platos vegetarianos
+     */
+    public $numVegetarian;
 }
