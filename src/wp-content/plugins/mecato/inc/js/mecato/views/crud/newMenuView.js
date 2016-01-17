@@ -83,7 +83,7 @@ define(['jquery', 'underscore', 'baseView', 'mecato/models/crud/newMenuModel', '
             },
             updateTopics : function(){
                 var topics = '';
-                _.each($('.listTopics button.yesTopic.active'), function(element, index){
+                _.each(this.$('.listTopics button.yesTopic').not('.inactive'), function(element, index){
                     if(topics.length > 0) topics += ',';
                     topics += $(element).data("id");
                 });

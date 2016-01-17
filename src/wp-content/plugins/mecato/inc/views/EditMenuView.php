@@ -31,8 +31,14 @@ class EditMenuView
 
     function show_view($attr)
     {
+
         if (!isset($_REQUEST['restId']))
+        {
+            ?>
+            <script>document.location.href = '/index.php/buscar-restaurantes/?help_menu=1';</script>
+            <?php
             return;
+        }
 
 
         $this->menuService = new MenuService();

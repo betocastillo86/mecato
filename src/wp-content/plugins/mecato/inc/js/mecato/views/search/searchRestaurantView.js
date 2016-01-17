@@ -34,10 +34,26 @@ define(['jquery', 'underscore', 'baseView', 'mecato/views/search/searchRestauran
                 this.map.on('list-filtered', this.listFiltered, this);
                 this.map.on('selected', this.restaurantSelected, this);
                 this.urlValues = new Object();
+                this.showHelp();
             },
             //Cuando el mapa carga puede cargar ahora el filtro
             cityLoaded: function (location) {
                 this.loadFilter(location);
+            },
+            showHelp : function()
+            {
+                if(this.$('#hidShowMenuHelp').length)
+                    this.showMenuHelp();
+                if(this.$('#hidShowSearchHelp').length)
+                    this.showSearchHelp();
+            },
+            showMenuHelp : function()
+            {
+                this.alert({title : 'Lee esto antes de empezar', message :this.$('#templateMenuHelp').html()});
+            },
+            showSearchHelp : function()
+            {
+                this.alert({title : 'Lee esto antes de empezar', message :this.$('#templateSearchHelp').html()});
             },
             loadFilter: function (location) {
                 this.filter = new SearchRestaurantFilterView({ el: '#divFilter', location: location, preselectedFilter : this.preselectedFilter });

@@ -199,9 +199,9 @@ class EditRestaurantView
                 height: 400px
             }
 
-            @media all and (max-width: 991px) {
+            @media (max-width: 991px) {
                 #map_location {
-                    height: 650px
+                    height: 300px
                 }
             }
         </style>
@@ -210,6 +210,10 @@ class EditRestaurantView
 
                 <div class="panel-heading">
                     <h3 class="panel-title">Ubicaci&oacute;n</h3>
+                </div>
+
+                <div class="col-sm-12">
+                    Busca en el mapa la ubicación del restaurante y selecciona el punto exacto
                 </div>
 
                 <div class="panel-body">
@@ -259,6 +263,10 @@ class EditRestaurantView
 
                 <div class="panel-heading">
                     <h3 class="panel-title">Detalle del restaurante</h3>
+                </div>
+
+                <div class="col-xs-12">
+                    Ingresa la información que conozcas del restaurante. Los campos marcados con asterisco (*) son obligatorios:
                 </div>
 
                 <div class="panel-body">

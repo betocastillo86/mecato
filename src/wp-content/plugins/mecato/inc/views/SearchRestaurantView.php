@@ -14,13 +14,17 @@ class SearchRestaurantView extends BaseView
         add_shortcode('mecato_search', array($this, 'show_view'));
     }
 
+    private $showMenuHelp = false;
+
     function show_view()
     {
         $this->show_styles();
+
         ?>
         <div id="divFullLoading"></div>
         <div id="divMainSection">
             <?php
+            $this->show_help();
             $this->show_filter();
             $this->show_filter_list();
             $this->show_map();
@@ -49,7 +53,92 @@ class SearchRestaurantView extends BaseView
                     {{address}} <br>
                     {{phone}}
                 </p>
-                <a class="btn btn-xs btn-default" href="{{guid}}">Ver más</a>
+
+                <?php
+                if($this->showMenuHelp)
+                {
+                    ?>
+                    <a class="btn btn-xs btn-default" href="/index.php/crear-plato/?restId={{id}}">Crear Plato</a>
+                    <?php
+                }
+                else
+                {
+                    ?>
+                    <a class="btn btn-xs btn-default" href="{{guid}}">Ver más</a>
+                    <?php
+                }
+                ?>
+
+
+            </div>
+        </script>
+
+        <?php
+    }
+
+
+    /****
+     * Muestra las variables de ayuda si son necesarias
+     */
+    function show_help()
+    {
+        //Muestra la ayuda que tiene que ver con buscar el restaurante para publicar el plato
+        if(isset($_REQUEST['help_menu']))
+        {
+            $this->showMenuHelp = true;
+            $this->show_menu_help();
+        }
+        else
+        {
+            $this->show_search_help();
+        }
+    }
+
+    function show_menu_help()
+    {
+        ?>
+        <input id="hidShowMenuHelp" type="hidden" value="1" />
+        <script id="templateMenuHelp" type="text/x-handlebars-template">
+            <div class="row">
+                <div class="col-sm-12">
+                    Para crear un plato debes seleccionar el restaurante al que pertenece. Los pasos para esto son:
+                    <div>
+                        <h4>1. Busca por nombre y ciudad el restaurante</h4>
+                        <div class="thumbnail">
+                            <img src="http://bicis.local.com/wp-content/uploads/2016/01/help1.png">
+                        </div>
+                        <h4>2. Seleccionalo en el mapa</h4>
+                        <div class="thumbnail">
+                            <img src="http://bicis.local.com/wp-content/uploads/2016/01/help2-seleccionar-restaurante.png">
+                        </div>
+                        <h4>3. Selecciona la opción "Crear Plato"</h4>
+                    </div>
+                </div>
+            </div>
+        </script>
+        <?php
+    }
+
+    function show_search_help()
+    {
+        ?>
+        <input id="hidShowSearchHelp" type="hidden" value="1" />
+        <script id="templateSearchHelp" type="text/x-handlebars-template">
+            <div class="row">
+                <div class="col-sm-12">
+                    Para encontrar el restaurante más cercano solo debes
+                    <div>
+                        <b>1. Busca por las características que más se acomoden a tus gustos o ubicación</b>
+                        <div class="thumbnail">
+                            <img src="http://bicis.local.com/wp-content/uploads/2016/01/help1.png">
+                        </div>
+                        <b>2. Selecciona en el mapa el restaurante que más te gusta</b>
+                        <div class="thumbnail">
+                            <img src="http://bicis.local.com/wp-content/uploads/2016/01/help2-seleccionar-restaurante.png">
+                        </div>
+                        <b>3. Conoce toda su información y visitalo :)</b>
+                    </div>
+                </div>
             </div>
         </script>
 
@@ -79,7 +168,22 @@ class SearchRestaurantView extends BaseView
 
                         <p class="list-group-item-text">{{address}}</p>
                         <input class="btn btn-xs btn-danger" type="button" value="Ver en mapa"/>
-                        <a class="btn btn-xs btn-default" href="{{guid}}">Ver</a>
+
+                        <?php
+                        if($this->showMenuHelp)
+                        {
+                        ?>
+                            <a class="btn btn-xs btn-default" href="/index.php/crear-plato/?restId={{id}}">Crear Plato</a>
+                        <?php
+                        }
+                        else
+                        {
+                        ?>
+                            <a class="btn btn-xs btn-default" href="{{guid}}">Ver</a>
+                        <?php
+                        }
+
+                        ?>
                     </div>
                     <div class="clearfix"></div>
 

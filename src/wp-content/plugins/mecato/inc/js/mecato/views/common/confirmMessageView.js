@@ -79,6 +79,8 @@ define(['jquery', 'underscore', 'backbone'],
                     message = args;
                 if (args.message)
                     message = args.message;
+                if (args.title)
+                    this.title = args.title;
 
                 if (args.autoclose != undefined)
                     this.autoclose = args.autoclose;
