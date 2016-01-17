@@ -7,7 +7,8 @@ define(['jquery', 'underscore', 'baseView', 'handlebars', 'mecato/models/search/
         var SearchRestaurantFilterView = BaseView.extend({
             events: {
                 'click a[data-radio-name="menu_type"]': 'filterByMenuType',
-                'click #divSelectedFilter .tagit-close' : 'closeSelectedItem'
+                'click #divSelectedFilter .tagit-close' : 'closeSelectedItem',
+                'click #closeFilter' : 'close'
             },
             bindings: {
                 '#ddlCity' : {
@@ -70,18 +71,15 @@ define(['jquery', 'underscore', 'baseView', 'handlebars', 'mecato/models/search/
             },
             loadPrefilter: function () {
                 //Asigna las propiedades al filtro
-                this.model.set(this.preselectedFilter);
+                this.model.set({
+                    cityId : this.preselectedFilter.cityId,
+                    menuType: this.preselectedFilter.menuType,
+                    text: this.preselectedFilter.text
+                });
                 //Selecciona el subtipo
-                if (this.preselectedFilter.SubTypeId)
-                    this.$('#subTypeSelector a[data-id="' + this.preselectedFilter.SubTypeId + '"]').addClass('active');
+                if (this.preselectedFilter.menuType)
+                    this.$('a[data-radio-name="menu_type"][data-id="' + this.preselectedFilter.menuType + '"]').addClass('active');
 
-                if (this.preselectedFilter.VendorId)
-                {
-                    //Si tiene el vendedor preseleccionado cuando cargue la lista toma el valor
-                    this.collection.once('sync', function () {
-                        this.selectFilterText({ label: this.collection.first().toJSON().vName, type: 'ven' });
-                    }, this);
-                }
             },
             selectFilterText: function (args) {
                 this.$('#txtFilter').hide();
@@ -116,6 +114,9 @@ define(['jquery', 'underscore', 'baseView', 'handlebars', 'mecato/models/search/
                 else
                     this.model.set('menuType', subTypeSelected);
             },
+            showResp : function(){
+                this.$('#divFilterOptions').show();
+            },
             closeSelectedItem: function () {
                 this.$('#divSelectedFilter').empty();
                 this.$('#txtFilter').show().val('');
@@ -125,9 +126,17 @@ define(['jquery', 'underscore', 'baseView', 'handlebars', 'mecato/models/search/
                 this.showLoadingAll(this.collection);
                 this.collection.searchRestaurants(this.model.toJSON());
             },
+            close : function(){
+                this.$('#divFilterOptions').hide();
+            },
             officesLoaded: function () {
 
-                this.$('#divVendorResult').html(this.templateCount(this.collection.length));
+
+
+                this.$('#divVendorResult').html(this.templateCount(this.collection.length))
+                    .removeClass('alert-success')
+                    .removeClass('alert-danger')
+                    .addClass(this.collection.length ? 'alert-success' : 'alert-danger');
 
                 this.trigger('list-loaded', { list: this.collection, city: this.model.get('cityId'), filter : this.model.toJSON() });
             },

@@ -23,8 +23,8 @@ define(['jquery', 'underscore', 'baseView', 'mecato/models/crud/newRestaurantMod
 
             },
             id : undefined,
-            lat : undefined,
-            lon : undefined,
+            lat: 4.57262365310281,
+            lon: -74.0970325469971,
             map: undefined,
             dayLabels : ["Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom"],
             marker : undefined,
@@ -57,6 +57,12 @@ define(['jquery', 'underscore', 'baseView', 'mecato/models/crud/newRestaurantMod
                         that.lon = position.coords.longitude;
                         that.updateLocation(true);
                     });
+
+                    //Si despues de 3 seguntos no han aceptado el mapa carga la ubicación por defecto
+                    setTimeout(function(){
+                        if(!that.map)
+                            that.updateLocation();
+                    }, 3000);
                 }
                 else {
                     //Si no tiene geolocalización lo ubica en la posición por defecto

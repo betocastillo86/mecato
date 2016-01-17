@@ -51,6 +51,12 @@ define(['jquery', 'underscore', 'baseView',  'handlebars'],
                         that.lon = position.coords.longitude;
                         that.updateLocation(15);
                     });
+
+                    //Si despues de 3 seguntos no han aceptado el mapa carga la ubicación por defecto
+                    setTimeout(function(){
+                        if(!that.map)
+                            that.updateLocation(12);
+                    }, 3000);
                 }
                 else {
                     //Si no tiene geolocalización lo ubica en la posición por defecto
@@ -154,14 +160,18 @@ define(['jquery', 'underscore', 'baseView',  'handlebars'],
                 });
 
 
-                if (!that.marks.length)
+                /*if (!that.marks.length)
                     this.alert('No hay resultados que coincidan con tu busqueda');
                 else
                 {
                     //Si hay resultados y la ciudad cambió se debe mover hacia la ciudad
                     if(this.currentCity && this.currentCity != response.city)
                         this.map.setCenter(that.marks[0].position);
-                }
+                }*/
+
+                if(that.marks.length && this.currentCity && this.currentCity != response.city)
+                    this.map.setCenter(that.marks[0].position);
+
 
                 //Actualiza la ciudad
                 this.currentCity = response.city;

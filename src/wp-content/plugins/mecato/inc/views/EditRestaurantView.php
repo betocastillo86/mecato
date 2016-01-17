@@ -246,7 +246,7 @@ class EditRestaurantView
     function show_basic_order_form($restaurant)
     {
 
-        wp_enqueue_style("mecatocss", MECATO_PLUGIN_URL . 'inc/css/mecato.css');
+
         wp_enqueue_style("mecatocss_weekline", MECATO_PLUGIN_URL . 'inc/css/jquery.weekline.css');
         /*wp_enqueue_script("google-maps",'http://maps.googl1e.com/maps/api/js?sensor=false' );
         wp_enqueue_script("handlebars",'https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.4/handlebars.min.js' );

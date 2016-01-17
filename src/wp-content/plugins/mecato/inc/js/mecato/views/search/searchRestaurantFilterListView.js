@@ -8,11 +8,13 @@ define(['jquery', 'underscore', 'baseView', 'handlebars'
         var SearchRestaurantFilterListView = BaseView.extend({
             events: {
                 'click .office-box' : 'select',
-                'click #btnShowNearest' : 'showNearest'
+                'click #btnShowNearest' : 'showNearest',
+                'click #closeFilterList' :'close'
             },
             bindings: {
 
             },
+            responsiveMode : false,
             templateList: undefined,
             selectedRestaurant : undefined,
             //Número total de restaurantes que hay de acuerdo al filtro
@@ -42,6 +44,11 @@ define(['jquery', 'underscore', 'baseView', 'handlebars'
             },
             showNearest : function(){
                 this.trigger('show-nearest');
+                this.valResponsiveClose();
+            },
+            showResp : function(){
+                this.responsiveMode = true;
+                this.$el.show();
             },
             select: function (obj) {
                 //Lanza el evento que la sede ha sido seleccionada ddesde la lista
@@ -49,6 +56,15 @@ define(['jquery', 'underscore', 'baseView', 'handlebars'
                 this.selectedRestaurant = _.findWhere(this.collection, { id: id });
                 this.trigger('selected', this.selectedRestaurant);
                 this.markSelectedRestaurant();
+                this.valResponsiveClose();
+            },
+            close : function(){
+                this.$el.hide();
+            },
+            //Cuando viene de moviles y se tiene que cerrar por alguna accion lo hace
+            valResponsiveClose : function(){
+                if(this.responsiveMode)
+                    this.close();
             },
             render: function () {
                 return this;

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: Beto
@@ -35,12 +36,15 @@ class SearchRestaurantView extends BaseView
         <div id="divMap" style="width:100%; height:500px"></div>
 
 
-        <script id="templateMapInfoRest" type="text/x-handlebars-template" >
-            <div  style="padding: 3px;text-align: center;">
-                <img src="{{#if thumbnail}} {{thumbnail}} {{else}} /wp-content/plugins/mecato/inc/img/icons/noimage.png {{/if}}" class="img-thumbnail" style="width:60px" />
+        <script id="templateMapInfoRest" type="text/x-handlebars-template">
+            <div style="padding: 3px;text-align: center;">
+                <img
+                    src="{{#if thumbnail}} {{thumbnail}} {{else}} /wp-content/plugins/mecato/inc/img/icons/noimage.png {{/if}}"
+                    class="img-thumbnail" style="width:60px"/>
             </div>
-            <div >
+            <div>
                 <h4>{{name}}</h4>
+
                 <p>
                     {{address}} <br>
                     {{phone}}
@@ -61,16 +65,20 @@ class SearchRestaurantView extends BaseView
 
             </div>
             <script id="templateFilteredList" type="text/x-handlebars-template">
+                <div class="show-filter"><span id="closeFilterList" style="width: 100%" class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></div>
                 {{#if list.length}}
                 {{#each list}}
                 <div id="officeList{{id}}" data-id="{{id}}" class="office-box list-group-item">
                     <div class="col-sm-4" style="padding: 3px;">
-                        <img src="{{#if thumbnail}} {{thumbnail}} {{else}} /wp-content/plugins/mecato/inc/img/icons/noimage.png {{/if}}" class="img-thumbnail" width="100%" height="40" />
+                        <img
+                            src="{{#if thumbnail}} {{thumbnail}} {{else}} /wp-content/plugins/mecato/inc/img/icons/noimage.png {{/if}}"
+                            class="img-thumbnail" width="150" height="150"/>
                     </div>
                     <div class="col-sm-8" style="padding: 5px;">
-                        <h5 class="list-group-item-heading"><a href="{{guid}}">{{name}}</a> </h5>
+                        <h5 class="list-group-item-heading"><a href="{{guid}}">{{name}}</a></h5>
+
                         <p class="list-group-item-text">{{address}}</p>
-                        <input class="btn btn-xs btn-danger" type="button" value="Ver en mapa" />
+                        <input class="btn btn-xs btn-danger" type="button" value="Ver en mapa"/>
                         <a class="btn btn-xs btn-default" href="{{guid}}">Ver</a>
                     </div>
                     <div class="clearfix"></div>
@@ -85,7 +93,8 @@ class SearchRestaurantView extends BaseView
                     <div>
 
                     </div>
-                    <div><a href="{{guid}}" class="btn">Visitalo</a></div>*/?>
+                    <div><a href="{{guid}}" class="btn">Visitalo</a></div>*/
+                    ?>
                 </div>
                 {{/each}}
 
@@ -94,12 +103,13 @@ class SearchRestaurantView extends BaseView
                     <h4 class="list-group-item-heading">No se encontraron resultados</h4>
 
                     {{#if total}}
-                        <p class="list-group-item-text">
-                            En el area que estas viendo no hay restaurantes. Pero si quieres puedes ir al más cercano.
-                        </p>
-                        <input type="button" id="btnShowNearest" class="btn btn-xs btn-default" value="Ver más cercano" />
+                    <p class="list-group-item-text">
+                        En el area que estas viendo no hay restaurantes. Pero si quieres puedes ir al más cercano.
+                    </p>
+                    <input type="button" id="btnShowNearest" class="btn btn-xs btn-default" value="Ver más cercano"/>
                     {{else}}
-                        <p class="list-group-item-text">Intenta realizando una busqueda diferente, depronto encontrarás lo que buscas</p>
+                    <p class="list-group-item-text">Intenta realizando una busqueda diferente, depronto encontrarás lo
+                        que buscas</p>
                     {{/if}}
 
 
@@ -117,46 +127,60 @@ class SearchRestaurantView extends BaseView
         ?>
         <div id="divFilter">
 
-            <div id="divVendorResult"></div>
+            <div id="divVendorResult" class="alert" style="text-align:center; margin-bottom: 0px;"></div>
+            <div class="show-filter">
+                <button id="btnShowFilter" type="button" class="btn btn-primary"><span class="glyphicon glyphicon-filter" aria-hidden="true"></span> Filtrar</button>
+                <button id="btnShowFilterList" type="button" class="btn btn-default"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Resultados</button>
+            </div>
 
-            <div class="inputs">
-                <select id="ddlCity" name="restaurant_city" style="display:block">
-                    <?php
-                    $cities = get_terms('ciudad', array('hide_empty' => false));
-
-                    foreach($cities as $city)
-                    {
-                        ?>
-                        <option value="<?php echo $city->slug ?>">
-                            <?php echo $city->name ?>
-                        </option>
+            <div id="divFilterOptions">
+                <div class="show-filter"><span id="closeFilter" style="width: 100%" class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></div>
+                <div>
+                    <b>Filtra como desees:</b>
+                </div>
+                <div class="form-group">
+                    <select id="ddlCity" name="restaurant_city" style="display:block" class="form-control">
                         <?php
-                    }
+                        $cities = get_terms('ciudad', array('hide_empty' => false));
 
-                    ?>
-                </select>
-            </div>
-            <div>
-                <div id="divSelectedFilter"></div>
-                <input id="txtFilter" type="text" placeholder="Busca restaurantes por nombre" />
-            </div>
-            <div class="btn-group" data-toggle="buttons">
-                <a type="button" class="btn btn-default" data-radio-name="menu_type" data-id="<?php echo MECATO_PLUGIN_PAGE_TAX_VEGETARIAN?>">
-                    Vegetariano
-                </a>
-                <a type="button" class="btn btn-default" data-radio-name="menu_type" data-id="<?php echo MECATO_PLUGIN_PAGE_TAX_VEGAN?>">Vegano
-                </a>
+                        foreach ($cities as $city) {
+                            ?>
+                            <option value="<?php echo $city->slug ?>">
+                                <?php echo $city->name ?>
+                            </option>
+                            <?php
+                        }
 
-                <script>
-                    window.menuTypes = {
-                        vegetarian : '<?php echo MECATO_PLUGIN_PAGE_TAX_VEGETARIAN?>',
-                        vegan : '<?php echo MECATO_PLUGIN_PAGE_TAX_VEGAN ?>'
-                    }
-                </script>
-            </div>
+                        ?>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <div id="divSelectedFilter"></div>
+                    <input id="txtFilter" type="text" placeholder="Busca restaurantes por nombre" class="form-control"/>
+                </div>
+                <div class="form-group">
+                    <div class="btn-group" data-toggle="buttons">
+                        <a type="button" class="btn btn-default" data-radio-name="menu_type"
+                           data-id="<?php echo MECATO_PLUGIN_PAGE_TAX_VEGETARIAN ?>">
+                            Vegetariano
+                        </a>
+                        <a type="button" class="btn btn-default" data-radio-name="menu_type"
+                           data-id="<?php echo MECATO_PLUGIN_PAGE_TAX_VEGAN ?>">Vegano
+                        </a>
 
-            <div>
-                <input type="button" value="Buscar" class="btn" />
+                        <script>
+                            window.menuTypes = {
+                                vegetarian: '<?php echo MECATO_PLUGIN_PAGE_TAX_VEGETARIAN?>',
+                                vegan: '<?php echo MECATO_PLUGIN_PAGE_TAX_VEGAN ?>'
+                            }
+                        </script>
+                    </div>
+                </div>
+
+                <?php /*
+                <div>
+                    <input type="button" value="Buscar" class="btn"/>
+                </div>*/ ?>
             </div>
 
 
@@ -188,28 +212,57 @@ class SearchRestaurantView extends BaseView
         wp_enqueue_style("mecatocss", MECATO_PLUGIN_URL . 'inc/css/mecato.css');
         ?>
         <style>
-            #divFilter {
+
+            @media(max-width:767px){
+                .show-filter 
+                {
+                    display: block !important;
+                    padding: 5px;
+                    text-align: center;
+                }
+
+                #divFilterOptions
+                {
+                    display:none;
+                    position:relative !important;
+                    width:100% !important;
+                }
+
+                #divFilteredList
+                {
+                    display:none;
+                    position:relative !important;
+                    width:100% !important;
+                }
+            }
+
+            .show-filter
+            {
+                display: none;
+            }
+            
+            #divFilterOptions {
                 width: 350px;
                 position: absolute;
                 left: 10px;
                 z-index: 3;
                 background: #fff;
-            }
-            #content
-            {
-                margin: 0px !important;
-                padding: 0px !important;
-                width:100%;
+                padding:10px;
             }
 
-            .main-content-area
-            {
+            #content {
                 margin: 0px !important;
                 padding: 0px !important;
-                width:100%;
+                width: 100%;
             }
-            .entry-header
-            {
+
+            .main-content-area {
+                margin: 0px !important;
+                padding: 0px !important;
+                width: 100%;
+            }
+
+            .entry-header {
                 display: none;
             }
 
@@ -221,10 +274,24 @@ class SearchRestaurantView extends BaseView
                 z-index: 3;
             }
 
-            .list-group-item.active, .list-group-item.active:hover
+            .list-group-item.active, .list-group-item.active:hover {
+                background-color: #f2f2f2;
+                border-color: gray;
+            }
+            .page-content, .entry-content, .entry-summary
             {
-                background-color:#f2f2f2;
-                border-color:gray;
+                margin-top:0px;
+            }
+
+            .row.full-width
+            {
+                margin-right: 0px;
+                margin-left: 0px;
+            }
+
+            #primary.col-sm-12{
+                padding-right: 0px;
+                padding-left: 0px;
             }
 
         </style>

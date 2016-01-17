@@ -34,14 +34,23 @@ class Mecato
         $this->apiMenu = new ApiMenu();
 
 
-
         //$this->viewEditMenu = new BikeDeliveryApi();
 
         add_action('wp_head', array($this, 'add_main_js'));
 
         add_filter('the_content', array($this, 'addShortcode'));
+
+        add_action('init', array($this, 'add_rules'));
+
+
     }
 
+
+    function add_rules()
+    {
+        //Reescribe la regla para buscador
+        add_rewrite_rule('^buscar-restaurantes/([^/]*)/([^/]*)/([^/]*)/([^/]*)/([^/]*)/([^/]*)/?', 'index.php?pagename=buscar-restaurantes&city=$matches[1]&text=$matches[2]&menuType=$matches[3]&lat=$matches[4]&lon=$matches[5]&zoom=$matches[6]', 'top');
+    }
 
     function add_main_js()
     {
@@ -51,6 +60,13 @@ class Mecato
         <?php
         wp_deregister_script('jquery-ui-core');
         wp_deregister_script('dazzling-bootstrapjs');
+
+        $this->add_main_css();
+    }
+
+    function add_main_css()
+    {
+        wp_enqueue_style("mecatocss", MECATO_PLUGIN_URL . 'inc/css/mecato.css');
     }
 
     /***

@@ -36,12 +36,12 @@
             search : function(cityId,text,menuType,lat,lon,zoom){
                 this.currentView = new SearchRestaurantView({el : this.defaultEl,
                     preselectedFilter :{
-                    cityId :cityId,
-                    text : text,
-                    menuType : menuType,
-                    lat :lat,
-                    lon :lon,
-                    zoom:zoom
+                    cityId :cityId == 'undefined' ? undefined : cityId,
+                    text : text == 'undefined' ? undefined : text,
+                    menuType : menuType== 'undefined' ? undefined : menuType,
+                    lat :lat== 'undefined' ? undefined : lat,
+                    lon :lon== 'undefined' ? undefined : lon,
+                    zoom:zoom== 'undefined' ? undefined : zoom
                 }});
             }
         });

@@ -5,25 +5,31 @@ define(['jquery', 'underscore', 'baseView', 'mecato/views/search/searchRestauran
     function ($, _, BaseView, SearchRestaurantMapView, SearchRestaurantFilterView, SearchRestaurantFilterListView) {
 
         var SearchRestaurantView = BaseView.extend({
+
+            events :{
+                'click #btnShowFilter' : 'showRespFilter',
+                'click #btnShowFilterList' : 'showRespFilterList'
+            },
             map: undefined,
             filter: undefined,
             filterList: undefined,
             preselectedFilter: undefined,
             urlValues : undefined,
+
             initialize: function (args) {
                 this.loadControls(args);
             },
             loadControls: function (args) {
                 this.preselectedFilter = {
-                    cityId: args.cityId,
-                    menuType: args.menuType,
-                    text: args.text,
-                    lat: args.lat,
-                    lon: args.lon,
-                    zoom: args.zoom
+                    cityId: args.preselectedFilter.cityId,
+                    menuType: args.preselectedFilter.menuType,
+                    text: args.preselectedFilter.text,
+                    lat: args.preselectedFilter.lat,
+                    lon: args.preselectedFilter.lon,
+                    zoom: args.preselectedFilter.zoom
                 };
 
-                this.map = new SearchRestaurantMapView({ el: '#divMap', lat :args.lat, lon: args.lon, zoom:args.zoom  });
+                this.map = new SearchRestaurantMapView({ el: '#divMap', lat :args.preselectedFilter.lat, lon: args.preselectedFilter.lon, zoom:args.preselectedFilter.zoom  });
                 this.map.on('set-city', this.cityLoaded, this);
                 this.map.on('list-filtered', this.listFiltered, this);
                 this.map.on('selected', this.restaurantSelected, this);
@@ -36,6 +42,12 @@ define(['jquery', 'underscore', 'baseView', 'mecato/views/search/searchRestauran
             loadFilter: function (location) {
                 this.filter = new SearchRestaurantFilterView({ el: '#divFilter', location: location, preselectedFilter : this.preselectedFilter });
                 this.filter.on('list-loaded', this.loadMap, this);
+            },
+            showRespFilter : function(){
+                this.filter.showResp();
+            },
+            showRespFilterList : function(){
+                this.filterList.showResp();
             },
             //evento disparado cuando se actualiza la lista de oficinas de acuerdo al mapa actual
             listFiltered: function (restaurants) {
@@ -52,14 +64,14 @@ define(['jquery', 'underscore', 'baseView', 'mecato/views/search/searchRestauran
                 this.urlValues['lat'] = restaurants.lat;
                 this.urlValues['lon'] = restaurants.lon;
                 this.urlValues['zoom'] = restaurants.zoom;
-                /*Backbone.history.navigate('/index.php/buscar-restaurantes/'
+                Backbone.history.navigate('/index.php/buscar-restaurantes/'
                     + this.urlValues.cityId + '/'
                     + this.urlValues.text + '/'
                     + this.urlValues.menuType + '/'
                     + this.urlValues.lat + '/'
                     + this.urlValues.lon + '/'
                     + this.urlValues.zoom
-                );*/
+                );
             },
             restaurantSelected: function (restaurant) {
                 this.filterList.selectRestaurant(restaurant);
