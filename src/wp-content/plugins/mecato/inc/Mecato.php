@@ -16,6 +16,7 @@ class Mecato
     protected $viewDetailsRestaurant = null;
     protected $viewDetailsMenu = null;
     protected $viewSearch = null;
+    protected $viewHome = null;
 
 
     protected $apiRestaurant = null;
@@ -32,6 +33,7 @@ class Mecato
 
         $this->apiRestaurant = new ApiRestaurant();
         $this->apiMenu = new ApiMenu();
+        $this->viewHome = new HomeView();
 
 
         //$this->viewEditMenu = new BikeDeliveryApi();

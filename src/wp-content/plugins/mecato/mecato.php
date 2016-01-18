@@ -34,6 +34,7 @@ require_once('inc/models/Menu.php');
 /**Views**/
 
 require_once('inc/views/BaseView.php');
+require_once('inc/views/HomeView.php');
 require_once('inc/views/FooterView.php');
 require_once('inc/views/EditRestaurantView.php');
 require_once('inc/views/EditMenuView.php');
