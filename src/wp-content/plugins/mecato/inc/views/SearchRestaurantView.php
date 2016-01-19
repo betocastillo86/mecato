@@ -58,7 +58,7 @@ class SearchRestaurantView extends BaseView
                 if($this->showMenuHelp)
                 {
                     ?>
-                    <a class="btn btn-xs btn-default" href="/index.php/crear-plato/?restId={{id}}">Crear Plato</a>
+                    <a class="btn btn-xs btn-default" href="/crear-plato/?restId={{id}}">Crear Plato</a>
                     <?php
                 }
                 else
@@ -173,7 +173,7 @@ class SearchRestaurantView extends BaseView
                         if($this->showMenuHelp)
                         {
                         ?>
-                            <a class="btn btn-xs btn-default" href="/index.php/crear-plato/?restId={{id}}">Crear Plato</a>
+                            <a class="btn btn-xs btn-default" href="/crear-plato/?restId={{id}}">Crear Plato</a>
                         <?php
                         }
                         else

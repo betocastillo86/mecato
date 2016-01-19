@@ -35,7 +35,7 @@ class EditMenuView
         if (!isset($_REQUEST['restId']))
         {
             ?>
-            <script>document.location.href = '/index.php/buscar-restaurantes/?help_menu=1';</script>
+            <script>document.location.href = '/buscar-restaurantes/?help_menu=1';</script>
             <?php
             return;
         }

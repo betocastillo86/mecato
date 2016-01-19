@@ -41,7 +41,7 @@ define(['jquery', 'underscore', 'baseView', 'mecato/models/crud/newMenuModel', '
                 var that = this;
                 this.$('.dropzone').dropzone(
                     {
-                        url: '/index.php/wp-json/api/menus/'+that.id+'/images',
+                        url: '/wp-json/api/menus/'+that.id+'/images',
                         complete: function (a, b, c) {
                             //debugger;
                             /*if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {

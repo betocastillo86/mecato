@@ -4,9 +4,9 @@
 define(['underscore', 'backbone'], function (_, Backbone) {
     var SearchRestaurantCollection = Backbone.Collection.extend({
 
-        baseUrl: "/index.php/wp-json/api/restaurants",
+        baseUrl: "/wp-json/api/restaurants",
 
-        url: "/index.php/wp-json/api/restaurants",
+        url: "/wp-json/api/restaurants",
 
         searchRestaurants : function(filter)
         {

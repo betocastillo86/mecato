@@ -80,7 +80,7 @@ define(['jquery', 'underscore', 'baseView', 'mecato/views/search/searchRestauran
                 this.urlValues['lat'] = restaurants.lat;
                 this.urlValues['lon'] = restaurants.lon;
                 this.urlValues['zoom'] = restaurants.zoom;
-                Backbone.history.navigate('/index.php/buscar-restaurantes/'
+                Backbone.history.navigate('/buscar-restaurantes/'
                     + this.urlValues.cityId + '/'
                     + this.urlValues.text + '/'
                     + this.urlValues.menuType + '/'

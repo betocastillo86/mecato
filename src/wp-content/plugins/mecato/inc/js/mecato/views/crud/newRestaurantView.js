@@ -74,7 +74,7 @@ define(['jquery', 'underscore', 'baseView', 'mecato/models/crud/newRestaurantMod
                 var that = this;
                 this.$('.dropzone').dropzone(
                     {
-                        url: '/index.php/wp-json//api/restaurants/'+that.id+'/images',
+                        url: '/wp-json//api/restaurants/'+that.id+'/images',
                         complete: function (a, b, c) {
                             //debugger;
                             /*if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {

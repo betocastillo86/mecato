@@ -11,13 +11,13 @@
             defaultEl: "#divMainSection",
 
             routes: {
-                "index.php/crear-restaurante(/)(?id=:id)": "newRestaurant",
-                "index.php/actualizar-restaurante(/)(?id=:id)": "newRestaurant",
-                "index.php/crear-plato(/)(?id=:id)": "newMenu",
-                "index.php/actualizar-plato(/)(?id=:id)": "newMenu",
-                'index.php/restaurante/:restaurantName(/)' :'restaurantDetail',
-                'index.php/plato/:menuName(/)' :'menuDetail',
-                'index.php/buscar-restaurantes(/:cityId)(/:text)(/:menuType)(/:lat)(/:lon)(/:zoom)/' :'search'
+                "crear-restaurante(/)(?id=:id)": "newRestaurant",
+                "actualizar-restaurante(/)(?id=:id)": "newRestaurant",
+                "crear-plato(/)(?id=:id)": "newMenu",
+                "actualizar-plato(/)(?id=:id)": "newMenu",
+                'restaurante/:restaurantName(/)' :'restaurantDetail',
+                'plato/:menuName(/)' :'menuDetail',
+                'buscar-restaurantes(/:cityId)(/:text)(/:menuType)(/:lat)(/:lon)(/:zoom)/' :'search'
             },
             newRestaurant : function(id)
             {
