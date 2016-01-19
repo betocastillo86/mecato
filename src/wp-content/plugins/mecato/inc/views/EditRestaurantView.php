@@ -145,8 +145,18 @@ class EditRestaurantView
             $model->lat = $_POST['restaurant_lat'];
             $model->lon = $_POST['restaurant_lon'];
             $model->description = $_POST['restaurant_description'];
-            $model->city = $_POST['restaurant_city'];
+
             $model->userId = get_current_user_id();
+
+
+            //Valida si la ciudad existe sino la crea
+            $termSlug = sanitize_title($_POST['restaurant_city']);
+            $term = get_term_by('slug', $termSlug, 'ciudad');
+
+            if(!$term)
+                wp_insert_term($_POST['restaurant_city'], 'ciudad');
+
+            $model->city = $termSlug;
 
 
             if (isset($_POST['restaurant_phone']))
@@ -223,21 +233,7 @@ class EditRestaurantView
                 </div>
             </div>
         </div>
-        <select id="restaurant_city" name="restaurant_city" style="display:none">
-        <?php
-        $cities = get_terms('ciudad', array('hide_empty' => false));
-
-            foreach($cities as $city)
-            {
-                ?>
-                <option value="<?php echo $city->slug ?>">
-                    <?php echo $city->name ?>
-                </option>
-                <?php
-            }
-
-        ?>
-        </select>
+        <input id="restaurant_city" name="restaurant_city" type="hidden" />
 
         <?php
     }

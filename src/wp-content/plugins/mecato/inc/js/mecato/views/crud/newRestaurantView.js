@@ -236,12 +236,12 @@ define(['jquery', 'underscore', 'baseView', 'mecato/models/crud/newRestaurantMod
 
                             });
 
-                            var selectedCity = this.$("#restaurant_city option").filter(function () {
+                            /*var selectedCity = this.$("#restaurant_city option").filter(function () {
                                 return this.text == cityName;
                             });
 
-                            that.model.set('city', selectedCity.val());
-
+                            */
+                            that.model.set('city', cityName);
                             //that.trigger('set-address', { address: results[0].formatted_address.split(' a ')[0], cityName : cityName });
                             that.model.set('address', results[0].formatted_address.split(' a ')[0]);
                         } else {
